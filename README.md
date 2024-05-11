@@ -26,6 +26,7 @@ Results
 | Stencil       | 392              |           |                   |                 |                           |                                 |
 | Svelte        | 60               |           |                   |                 |                           |                                 |
 | Vue.js        | 39               |           |                   |                 |                           |                                 |
+| Tonic         | xx               |           |                   |                 |                           |                                 |
 
 To make the results somewhat comparable only the most-basic projects have been
 created. When there was a wizard to create the project, no optional features

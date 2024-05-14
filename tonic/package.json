@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "@socketsupply/tonic": "^15.1.2"
-  },
-  "devDependencies": {
-    "esbuild": "^0.21.1"
-  }
-}

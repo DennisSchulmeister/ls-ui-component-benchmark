@@ -1,0 +1,25 @@
+{
+  "name": "@dschulmeis/ls-ui-component-benchmark-lit",
+  "version": "1.0.0",
+  "description": "Lit | UI Component Benchmark",
+  "author": "Dennis Schulmeister-Zimolong",
+  "type": "module",
+  "scripts": {
+    "clean": "node bin/clean.js",
+    "build": "npm run clean && node bin/build-static.mjs && node bin/esbuild-bundle.js",
+    "start": "node bin/esbuild-serve.js"
+  },
+  "config": {
+    "src_dir": "src",
+    "static_dir": "static",
+    "build_dir": "build"
+  },
+  "dependencies": {
+    "lit": "^3.1.3"
+  },
+  "devDependencies": {
+    "esbuild": "^0.21.2",
+    "esbuild-plugin-less": "^1.3.4",
+    "shelljs": "^0.8.5"
+  }
+}

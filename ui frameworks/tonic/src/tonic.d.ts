@@ -9,11 +9,11 @@ declare module '@socketsupply/tonic' {
         toString(): any;
     }
 
-    export type Properties = {
-        [x: string]: unknown;
-    }
+    // export type Properties = {
+    //     [x: string]: unknown;
+    // }
     
-    export class Tonic extends HTMLElement {
+    export class Tonic<Properties = never> extends HTMLElement {
         //
         // Manually added typings based on the documentation on the website
         //

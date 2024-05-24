@@ -1,16 +1,11 @@
 import "./index.less";
 
-// Global application object
-import "./components/MyApplication.js";
+import "./components/ApplicationFrame.js";
+import "./components/app-frame/ApplicationHeader.js";
+import "./components/app-frame/PageNumbers.js";
+import "./components/app-frame/ProgressBar.js";
 
-// Atoms: Simple components strictly for rendering
-import "./components/atoms/MyButton.js";
-import "./components/atoms/MyPageNumbers.js";
-import "./components/atoms/MyPagePreview.js";
-import "./components/atoms/MyProgressBar.js";
+import "./components/basic/SimpleButton.js";
 
-// Molecules: Components composed of other components
-import "./components/molecules/MyApplicationHeader.js";
-
-// Pages: Distinct pages with unique behaviour
-import "./components/pages/MyBookContentPage.js";
+import "./components/book-content/BookContentPage.js";
+import "./components/book-content/PagePreview.js";

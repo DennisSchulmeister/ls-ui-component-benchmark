@@ -1,0 +1,48 @@
+simple-button {
+    // Regular button
+    button {
+        border: none;
+        padding: 1em;
+        border-radius: 0.5em;
+    }
+
+    &:not([disabled = "true"]) {
+        button {    
+            background: rgb(220, 220, 220);
+            color: rgb(107, 107, 107);
+    
+            &:hover {
+                cursor: pointer;
+                background: rgb(235, 235, 235);
+            }
+        }
+    }
+
+    &[disabled = "true"] {
+        button {
+            background: rgb(230, 230, 230);
+            color: rgb(170, 170, 170);
+        }
+    }
+
+    // Primary button
+    &[type="primary"] {
+        &:not([disabled = "true"]) {
+            button {
+                background: rgb(14, 111, 180);
+                color: white;
+    
+                &:hover {
+                    background: rgb(70, 162, 227);
+                }
+            }
+        }
+
+        &[disabled = "true"] {
+            button {
+                background: rgb(136, 161, 180);
+                color: rgb(196, 196, 196);
+            }
+        }
+    }
+}

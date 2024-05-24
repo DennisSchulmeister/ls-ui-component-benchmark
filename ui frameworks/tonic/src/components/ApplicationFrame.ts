@@ -1,14 +1,14 @@
 import { Observable } from "../utils/observable.js";
 
 import Tonic from "@socketsupply/tonic";
-import "./MyApplication.less";
+import "./ApplicationFrame.less";
 
 /**
  * @returns The global application instance
  */
-export function getApplication(): MyApplication {
+export function getApplicationFrame(): ApplicationFrame {
     let app = document.getElementById("app") as unknown;
-    return app as MyApplication;
+    return app as ApplicationFrame;
 }
 
 /**
@@ -16,13 +16,12 @@ export function getApplication(): MyApplication {
  * consisting of an application header, a page preview and two buttons to navigate within
  * the simulated currently open study book.
  */
-export class MyApplication extends Tonic {
-    // Global application state with a simulaed study book
+export class ApplicationFrame extends Tonic {
+    // Global application state with a simulated study book
     readonly book = {
         title:       new Observable<string>("Simulated Study Book"),
         currentPage: new Observable<number>(1),
         totalPages:  new Observable<number>(10),
-
 
         /**
          * Navigate to the next study book page.
@@ -45,10 +44,10 @@ export class MyApplication extends Tonic {
 
     render() {
         return this.html`
-            <my-application-header></my-application-header>
-            <my-book-content-page></my-book-content-page>
+            <application-header></application-header>
+            <book-content-page></book-content-page>
         `;
     }
 }
 
-Tonic.add(MyApplication);
+Tonic.add(ApplicationFrame);

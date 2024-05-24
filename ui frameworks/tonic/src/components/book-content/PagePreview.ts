@@ -1,5 +1,5 @@
 import Tonic from "@socketsupply/tonic";
-import "./MyPagePreview.less";
+import "./PagePreview.less";
 
 type Properties = {
     page: number;
@@ -9,7 +9,7 @@ type Properties = {
  * Dummy component to simulate the display of a book page. Simply shows the
  * number of the current page prominently in the middle of the screen.
  */
-export class MyPagePreview extends Tonic<Properties> {
+export class PagePreview extends Tonic<Properties> {
     render() {
         return this.html`
             <div>${this.props.page.toString()}</div>
@@ -17,4 +17,4 @@ export class MyPagePreview extends Tonic<Properties> {
     }
 }
 
-Tonic.add(MyPagePreview);
+Tonic.add(PagePreview);

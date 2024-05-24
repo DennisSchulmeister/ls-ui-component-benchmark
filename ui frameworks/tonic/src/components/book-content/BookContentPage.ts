@@ -15,10 +15,12 @@ export class BookContentPage extends Tonic {
         this.#app = getApplicationFrame();
 
         this.#app.book.currentPage.bindFunction(() => this.reRender());
+        window.addEventListener("keyup", this.keyUp.bind(this));
     }
 
     click(e: MouseEvent) {
         const button = Tonic.match(e.target, "[data-action]");
+        if (!button) return;
 
         if (button.dataset.action === "prev-page") {
             this.#app.book.gotoPreviousPage();
@@ -26,6 +28,21 @@ export class BookContentPage extends Tonic {
         } else if (button.dataset.action === "next-page") {
             this.#app.book.gotoNextPage();
             this.reRender();
+        }
+    }
+
+    keyUp(e: KeyboardEvent) {
+        if (e.target !== document.body) return;
+
+        switch (e.key) {
+            case "ArrowRight":
+            case "Enter":
+            case " ":
+                this.#app.book.gotoNextPage();
+                break;
+            case "ArrowLeft":
+                this.#app.book.gotoPreviousPage();
+                break;
         }
     }
 

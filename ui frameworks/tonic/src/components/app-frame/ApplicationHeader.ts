@@ -7,7 +7,14 @@ import "./ApplicationHeader.less";
  */
 export class ApplicationHeader extends Tonic {
     render() {
-        return this.html``;
+        return this.html`
+            <progress-bar></progress-bar>
+
+            <div class="main-area">
+                <book-title></book-title>
+                <page-numbers></page-numbers>
+            </div>
+        `;
     }
 }
 

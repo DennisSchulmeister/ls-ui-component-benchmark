@@ -19,7 +19,7 @@ export function getApplicationFrame(): ApplicationFrame {
 export class ApplicationFrame extends Tonic {
     // Global application state with a simulated study book
     readonly book = {
-        title:       new Observable<string>("Simulated Study Book"),
+        title:       new Observable<string>("Title of the study book"),
         currentPage: new Observable<number>(1),
         totalPages:  new Observable<number>(10),
 

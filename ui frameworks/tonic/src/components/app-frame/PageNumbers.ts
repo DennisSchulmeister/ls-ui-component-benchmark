@@ -1,3 +1,6 @@
+import { getApplicationFrame } from "../ApplicationFrame.js";
+import { ApplicationFrame }    from "../ApplicationFrame.js";
+
 import Tonic from "@socketsupply/tonic";
 import "./PageNumbers.less";
 
@@ -6,8 +9,18 @@ import "./PageNumbers.less";
  * Similar to this: 1 / 3
  */
 export class PageNumbers extends Tonic {
+    #app: ApplicationFrame;
+
+    constructor() {
+        super();
+        this.#app = getApplicationFrame();
+
+        this.#app.book.currentPage.bindFunction(() => this.reRender());
+        this.#app.book.totalPages.bindFunction(() => this.reRender());
+    }
+
     render() {
-        return this.html``;
+        return this.html`${this.#app.book.currentPage.value.toString()} / ${this.#app.book.totalPages.value.toString()}`;
     }
 }
 

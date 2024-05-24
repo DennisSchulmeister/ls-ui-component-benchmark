@@ -2,6 +2,7 @@ import "./index.less";
 
 import "./components/ApplicationFrame.js";
 import "./components/app-frame/ApplicationHeader.js";
+import "./components/app-frame/BookTitle.js";
 import "./components/app-frame/PageNumbers.js";
 import "./components/app-frame/ProgressBar.js";
 

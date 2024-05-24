@@ -14,9 +14,7 @@ export class BookContentPage extends Tonic {
         super();
         this.#app = getApplicationFrame();
 
-        this.#app.book.currentPage.bindFunction(() => {
-            this.reRender();
-        });
+        this.#app.book.currentPage.bindFunction(() => this.reRender());
     }
 
     click(e: MouseEvent) {

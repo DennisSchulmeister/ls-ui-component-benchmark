@@ -1,21 +1,26 @@
+import { TonicComponent }      from "../../TonicComponent.js";
 import { getApplicationFrame } from "../ApplicationFrame.js";
 import { ApplicationFrame }    from "../ApplicationFrame.js";
 
-import Tonic from "@socketsupply/tonic";
 import "./BookContentPage.less";
 
 /**
  * Main content area component to render the currently visible page of a study book.
  */
-export class BookContentPage extends Tonic {
-    #app: ApplicationFrame;
+export class BookContentPage extends TonicComponent {
+    #app: ApplicationFrame = getApplicationFrame();
 
     constructor() {
         super();
-        this.#app = getApplicationFrame();
 
-        this.#app.book.currentPage.bindFunction(() => this.reRender());
-        window.addEventListener("keyup", this.keyUp.bind(this));
+        this.bindFunction(this.#app.book.currentPage, this.reRender.bind(this));
+
+        this.keyUp = this.keyUp.bind(this);
+        window.addEventListener("keyup", this.keyUp);
+    }
+
+    disconnected() {
+        window.removeEventListener("keyup", this.keyUp);
     }
 
     render() {
@@ -43,7 +48,7 @@ export class BookContentPage extends Tonic {
      * Handle button clicks
      */
     click(e: MouseEvent) {
-        const button = Tonic.match(e.target, "[data-action]");
+        const button = TonicComponent.match(e.target, "[data-action]");
         if (!button) return;
 
         if (button.dataset.action === "prev-page") {
@@ -74,4 +79,4 @@ export class BookContentPage extends Tonic {
     }
 }
 
-Tonic.add(BookContentPage);
+TonicComponent.add(BookContentPage);

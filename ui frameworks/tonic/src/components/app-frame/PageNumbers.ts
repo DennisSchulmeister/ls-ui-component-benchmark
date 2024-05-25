@@ -1,22 +1,20 @@
+import { TonicComponent }      from "../../TonicComponent.js";
 import { getApplicationFrame } from "../ApplicationFrame.js";
 import { ApplicationFrame }    from "../ApplicationFrame.js";
 
-import Tonic from "@socketsupply/tonic";
-import "./PageNumbers.less";
 
 /**
  * Small component to display the current page number and total number of pages.
  * Similar to this: 1 / 3
  */
-export class PageNumbers extends Tonic {
-    #app: ApplicationFrame;
+export class PageNumbers extends TonicComponent {
+    #app: ApplicationFrame = getApplicationFrame();;
 
     constructor() {
         super();
-        this.#app = getApplicationFrame();
 
-        this.#app.book.currentPage.bindFunction(() => this.reRender());
-        this.#app.book.totalPages.bindFunction(() => this.reRender());
+        this.bindFunction(this.#app.book.currentPage, this.reRender.bind(this));
+        this.bindFunction(this.#app.book.totalPages, this.reRender.bind(this));
     }
 
     render() {
@@ -24,4 +22,4 @@ export class PageNumbers extends Tonic {
     }
 }
 
-Tonic.add(PageNumbers);
+TonicComponent.add(PageNumbers);

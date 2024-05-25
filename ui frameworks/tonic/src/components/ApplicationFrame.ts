@@ -1,6 +1,6 @@
-import { Observable } from "../utils/observable.js";
+import { TonicComponent } from "../TonicComponent.js";
+import { Observable }     from "../utils/observable.js";
 
-import Tonic from "@socketsupply/tonic";
 import "./ApplicationFrame.less";
 
 /**
@@ -16,7 +16,7 @@ export function getApplicationFrame(): ApplicationFrame {
  * consisting of an application header, a page preview and two buttons to navigate within
  * the simulated currently open study book.
  */
-export class ApplicationFrame extends Tonic {
+export class ApplicationFrame extends TonicComponent {
     // Global application state with a simulated study book
     readonly book = {
         title:       new Observable<string>("Title of the study book"),
@@ -50,4 +50,4 @@ export class ApplicationFrame extends Tonic {
     }
 }
 
-Tonic.add(ApplicationFrame);
+TonicComponent.add(ApplicationFrame);

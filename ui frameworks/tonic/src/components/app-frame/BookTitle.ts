@@ -1,20 +1,18 @@
+import { TonicComponent }      from "../../TonicComponent.js";
 import { getApplicationFrame } from "../ApplicationFrame.js";
 import { ApplicationFrame }    from "../ApplicationFrame.js";
 
-import Tonic from "@socketsupply/tonic";
 import "./BookTitle.less";
 
 /**
  * Simple component to render the current book title.
  */
-export class BookTitle extends Tonic {
-    #app: ApplicationFrame;
+export class BookTitle extends TonicComponent {
+    #app: ApplicationFrame = getApplicationFrame();
 
     constructor() {
         super();
-        this.#app = getApplicationFrame();
-
-        this.#app.book.title.bindFunction(() => this.reRender());
+        this.bindFunction(this.#app.book.title, this.reRender.bind(this));
     }
 
     render() {
@@ -22,4 +20,4 @@ export class BookTitle extends Tonic {
     }
 }
 
-Tonic.add(BookTitle);
+TonicComponent.add(BookTitle);

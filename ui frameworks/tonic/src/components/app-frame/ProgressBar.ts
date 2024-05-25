@@ -1,22 +1,21 @@
+import { TonicComponent }      from "../../TonicComponent.js";
 import { getApplicationFrame } from "../ApplicationFrame.js";
 import { ApplicationFrame }    from "../ApplicationFrame.js";
 
-import Tonic from "@socketsupply/tonic";
 import "./ProgressBar.less";
 
 /**
  * Progress bar the grows wider the more the current page reaches the end of the
  * currently open study book.
  */
-export class ProgressBar extends Tonic {
-    #app: ApplicationFrame;
-
+export class ProgressBar extends TonicComponent {
+    #app: ApplicationFrame = getApplicationFrame();
+    
     constructor() {
         super();
-        this.#app = getApplicationFrame();
 
-        this.#app.book.currentPage.bindFunction(() => this.updateWidth());
-        this.#app.book.totalPages.bindFunction(() => this.updateWidth());
+        this.bindFunction(this.#app.book.currentPage, this.updateWidth.bind(this));
+        this.bindFunction(this.#app.book.totalPages, this.updateWidth.bind(this));
     }
 
     #calcWidth(): number {
@@ -37,4 +36,4 @@ export class ProgressBar extends Tonic {
     }
 }
 
-Tonic.add(ProgressBar);
+TonicComponent.add(ProgressBar);

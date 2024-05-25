@@ -1,4 +1,4 @@
-import Tonic from "@socketsupply/tonic";
+import { TonicComponent } from "../../TonicComponent.js";
 import "./SimpleButton.less";
 
 type Properties = {
@@ -9,7 +9,7 @@ type Properties = {
 /**
  * A simple button component. Renders a simple styled button.
  */
-export class SimpleButton extends Tonic<Properties> {
+export class SimpleButton extends TonicComponent<Properties> {
     render() {
         return this.html`
             <Button>${this.children}</Button>
@@ -17,4 +17,4 @@ export class SimpleButton extends Tonic<Properties> {
     }
 }
 
-Tonic.add(SimpleButton);
+TonicComponent.add(SimpleButton);

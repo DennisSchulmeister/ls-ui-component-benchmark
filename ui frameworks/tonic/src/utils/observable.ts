@@ -8,23 +8,24 @@ type Binding<T> = {
 };
 
 /**
- * Utilits class borrowed from @dschulmeis/ls-utils to implement a simple version
+ * Utility class borrowed from @dschulmeis/ls-utils to implement a simple version
  * of the observer pattern. The idea is to have objects of this class at the application
  * or page level for each value that represents a global state that affects multiple
  * components deep in the DOM tree. The molecule components can register callbacks
  * on these values and rerender their sub-components as necessary.
  */
 export class Observable<T> {
-    _value: T;
-    _bindings: Binding<T>[] = [];
-    _validators: Validator<T>[] = [];
+    #value:      T;
+    #bindings:   Map<number, Binding<T>> = new Map();
+    #validators: Map<number, Validator<T>> = new Map();
+    #sequence:   number = 0;
 
     /**
      * The constructor.
      * @param value Initial value
      */
     constructor(value: T) {
-        this._value = value;
+        this.#value = value;
     }
 
     /**
@@ -32,7 +33,7 @@ export class Observable<T> {
      * @returns the current value
      */
     get value(): T {
-        return this._value;
+        return this.#value;
     }
 
     /**
@@ -40,10 +41,10 @@ export class Observable<T> {
      * @param newValue New value
      */
     set value(newValue: T) {
-        let oldValue = this._value;
+        let oldValue = this.#value;
 
         if (!this._callValidators(newValue, oldValue)) return;
-        this._value = newValue;
+        this.#value = newValue;
         this._callObservers(newValue, oldValue);
     }
 
@@ -53,17 +54,20 @@ export class Observable<T> {
      * if the update is allowed or false, if the update is not allowed.
      *
      * @param func Validator function
+     * @returns Key to remove the validator function later
      */
-    addValidator(func: Validator<T>) {
-        this._validators.push(func);
+    addValidator(func: Validator<T>): number {
+        this.#sequence++;
+        this.#validators.set(this.#sequence, func);
+        return this.#sequence;
     }
 
     /**
      * Unregister previously registered validator function.
-     * @param func Validator function
+     * @param key Key of the validator function
      */
-    removeValidator(func: Validator<T>) {
-        this._validators = this._validators.filter(v => v != func);
+    removeValidator(key: number) {
+        this.#validators.delete(key);
     }
 
     /**
@@ -71,17 +75,12 @@ export class Observable<T> {
      * be called with the new and the old value.
      * 
      * @param func Callback function
+     * @returns Key to unbind the callback function later
      */
-    bindFunction(func: Callback<T>) {
-        this._bindings.push({ callback: func });
-    }
-
-    /**
-     * Unregister a previously registered callback function.
-     * @param func Callback function
-     */
-    unbindFunction(func: Callback<T>) {
-        this._unbind({ callback: func });
+    bindFunction(func: Callback<T>): number {
+        this.#sequence++;
+        this.#bindings.set(this.#sequence, { callback: func });
+        return this.#sequence;
     }
 
     /**
@@ -91,36 +90,28 @@ export class Observable<T> {
      *
      * @param element The element to be updated
      * @param escape Whether to escape HTML entities (default: true)
+     * @returns Key to unbind the element later
      */
-    bindElement(element: HTMLElement, escape: boolean) {
-        this._bindings.push({ element, escape });
+    bindElement(element: HTMLElement, escape: boolean): number {
+        this.#sequence++;
+        if (escape == undefined) escape = true;
+        this.#bindings.set(this.#sequence, { element, escape });
+        return this.#sequence;
     }
 
     /**
-     * Unregister a previously registered HTML element.
-     * @param element HTML Element
-     */
-    unbindElement(element: HTMLElement) {
-        this._unbind({ element });
-    }
-
-    /**
-     * Remove all bindings for a given callback function or HTML element.
-     */
-    _unbind(binding: Binding<T>) {
-        this._bindings = this._bindings.filter(entry => {
-            if (binding.callback) return entry.callback == binding.callback;
-            if (binding.element)  return entry.element  == binding.element;
-            return true;
-        });
+     * Unregister a previously registered callback function.
+     * @param key Key of the binding to remove
+    */
+    unbind(key: number) {
+            this.#bindings.delete(key);
     }
 
     /**
      * Call all validators before an update to check whether it can be performed.
      */
     _callValidators(newValue: T, oldValue: T): boolean {
-        for (let i = 0; i < this._validators.length; i++) {
-            let validator = this._validators[i];
+        for (let validator of this.#validators.values()) {
             if (!validator(newValue, oldValue)) return false;
         }
 
@@ -131,7 +122,7 @@ export class Observable<T> {
      * Call all observers in the order they were bound.
      */
     _callObservers(newValue: T, oldValue: T) {
-        for (let binding of this._bindings) {
+        for (let binding of this.#bindings.values()) {
             if (binding.callback) {
                 binding.callback(newValue, oldValue);
             }

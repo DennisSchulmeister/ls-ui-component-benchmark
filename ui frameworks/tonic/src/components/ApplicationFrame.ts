@@ -1,5 +1,5 @@
 import { TonicComponent } from "../TonicComponent.js";
-import { Observable }     from "../utils/observable.js";
+import { Observable }     from "../observable.js";
 
 import "./ApplicationFrame.less";
 

@@ -1,7 +1,7 @@
-import type { Validator } from "./utils/observable";
-import type { Callback }  from "./utils/observable";
+import type { Validator } from "./observable";
+import type { Callback }  from "./observable";
 
-import { Observable }     from "./utils/observable";
+import { Observable }     from "./observable";
 import Tonic              from "@socketsupply/tonic";
 
 /**

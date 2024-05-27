@@ -53,10 +53,8 @@ export class BookContentPage extends TonicComponent {
 
         if (button.dataset.action === "prev-page") {
             this.#app.book.gotoPreviousPage();
-            this.reRender();
         } else if (button.dataset.action === "next-page") {
             this.#app.book.gotoNextPage();
-            this.reRender();
         }
     }
 

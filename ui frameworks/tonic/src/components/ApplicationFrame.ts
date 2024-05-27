@@ -1,6 +1,9 @@
-import { TonicComponent } from "../TonicComponent.js";
-import { Observable }     from "../observable.js";
-import { Router }         from "../router.js"
+import type { TonicTemplate } from "@socketsupply/tonic";
+import type { Properties}     from "@socketsupply/tonic";
+
+import { TonicComponent }     from "../TonicComponent.js";
+import { Observable }         from "../observable.js";
+import { Router }             from "../router.js"
 
 import "./ApplicationFrame.less";
 
@@ -18,25 +21,30 @@ export function getApplicationFrame(): ApplicationFrame {
  * the simulated currently open study book.
  */
 export class ApplicationFrame extends TonicComponent {
-    // Global application state with a simulated study book
+    /**
+     * Global application state with a simulated study book
+     */
     readonly book = {
         title:       new Observable<string>("Title of the study book"),
         currentPage: new Observable<number>(1),
         totalPages:  new Observable<number>(10),
 
         /**
-         * Go to the first study book page.
+         * Go to the given study book page and update URL accordingly. Can either be called
+         * from anywhere in the app to change the current page or from the SPA router to call
+         * up the page from the current URL.
          */
-        gotoPage(page: number, fromRoute?: boolean) {
-            if (page >= 1 && page <= this.totalPages.value) {
-                if (fromRoute) {
-                    this.currentPage.value = page;
-                } else {
-                    location.hash = `/book/page/${page}`;
-                }
-            } else {
+        gotoPage(page: any) {
+            let pageNumber = parseInt(page);
+            let pageUrl    = `#/book/page/${page}`;
+
+            if (isNaN(pageNumber) || pageNumber < 1 || pageNumber > this.totalPages.value) {
                 console.error(`Unknown page: ${page}`);
+                return;
             }
+
+            if (location.hash !== pageUrl) location.hash = pageUrl;
+            if (this.currentPage.value !== pageNumber) this.currentPage.value = pageNumber;
         },
 
         /**
@@ -44,7 +52,7 @@ export class ApplicationFrame extends TonicComponent {
          */
         gotoNextPage() {
             if (this.currentPage.value < this.totalPages.value) {
-                location.hash = `/book/page/${this.currentPage.value + 1}`;
+                this.gotoPage(this.currentPage.value + 1);
             }
         },
     
@@ -53,17 +61,21 @@ export class ApplicationFrame extends TonicComponent {
          */
         gotoPreviousPage() {
             if (this.currentPage.value > 1) {
-                location.hash = `/book/page/${this.currentPage.value - 1}`;
+                this.gotoPage(this.currentPage.value - 1);
             }
         },
     };
 
     #router: Router;
-    #unknownUrl = true;
+    #pageTemplate?: TonicTemplate;
+    #pageName: string = "";
 
     constructor() {
         super();
 
+        /**
+         * Routing rules
+         */
         this.#router = new Router([{
             // Redirect to the first page
             url: "^/$",
@@ -71,53 +83,49 @@ export class ApplicationFrame extends TonicComponent {
         }, {
             // Show requested book page
             url: "^/book/page/(.*)$",
-            show: this.#gotoBookPage.bind(this),
+            show: (matches) => this.#gotoPage("BookContentPage", {page: matches?.[1]}),
         }, {
             // Show 404 page
             url: ".*",
-            show: this.#gotoNotFoundPage.bind(this),
+            show: () => this.#gotoPage("NotFoundPage", {url: location.hash.slice(1)}),
         }]);
 
         this.#router.start();
     }
 
     /**
-     * Update application state to reflect the new page from the URL.
-     * Trigger a rerendering if the previous URL pointed to another type of page.
+     * Helper function called by the SPA router to instantiate the correct HTML template
+     * for the given URL and trigger re-rendering, if necessary. This is called by the
+     * router and not by the `render()` method to allow some flexibility when to actually
+     * re-render or not. Because some pages, when the type of page didn't change, just need
+     * the observables with the application state to be updated.
+     * 
+     * @param pageName Name of the requested page
+     * @param properties HTML attributes or other data extracted from the URL
      */
-    #gotoBookPage(matches: RegExpMatchArray|null, oldHash: string) {
-        let number = parseInt(matches?.[1] || "");
+    #gotoPage(pageName: string, properties?: Properties) {
+        let rerender = false;
 
-        if (isNaN(number)) {
-            console.error(`Invalid page number: ${number}`);
+        if (pageName === "BookContentPage") {
+            this.#pageTemplate = this.html`<book-content-page></book-content-page>`;
+            if (properties?.page) this.book.gotoPage(properties.page);
+        } else if (pageName === "NotFoundPage") {
+            this.#pageTemplate = this.html`<not-found-page ...${properties}></not-found-page>`;
+            rerender = true;
+        } else {
             return;
         }
 
-        this.book.gotoPage(number, true);
-
-        if (this.#unknownUrl || !oldHash.startsWith("/book/page/")) {
-            this.#unknownUrl = false;
+        if (this.#pageName !== pageName || rerender) {
+            this.#pageName = pageName;
             this.reRender();
-        };
-
-    }
-
-    /**
-     * Update application state to show a "404 not found" page.
-     */
-    #gotoNotFoundPage() {
-        this.#unknownUrl = true;
-        this.reRender();
+        }
     }
 
     render() {
         return this.html`
             <application-header></application-header>
-            ${
-                this.#unknownUrl
-                    ? this.html`<not-found-page url="${location.hash.slice(1)}"></not-found-page>`
-                    : this.html`<book-content-page></book-content-page>`
-            }
+            ${this.#pageTemplate || ""}
         `;
     }
 }

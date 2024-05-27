@@ -1,5 +1,5 @@
 declare module '@socketsupply/tonic' {
-    declare class TonicTemplate {
+    export interface TonicTemplate {
         constructor(rawText: any, templateStrings: any, unsafe: any);
         isTonicTemplate: boolean;
         unsafe: any;
@@ -7,12 +7,12 @@ declare module '@socketsupply/tonic' {
         templateStrings: any;
         valueOf(): any;
         toString(): any;
-    }
+    };
 
-    // export type Properties = {
-    //     [x: string]: unknown;
-    // }
-    
+    export type Properties = {
+        [k in string]: any
+    };
+
     export class Tonic<Properties = never> extends HTMLElement {
         //
         // Manually added typings based on the documentation on the website

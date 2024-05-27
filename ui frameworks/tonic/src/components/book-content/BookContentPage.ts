@@ -34,11 +34,11 @@ export class BookContentPage extends TonicComponent {
             
             <div class="button-row">
                 <simple-button data-action="prev-page" type="primary" disabled="${prevDisabled.toString()}">
-                    <span>Zurück</span>
+                    <span>Previous</span>
                 </simple-button>
 
                 <simple-button data-action="next-page" type="primary" disabled="${nextDisabled.toString()}">
-                    <span>Weiter</span>
+                    <span>Next</span>
                 </simple-button>
             </div>
         `;

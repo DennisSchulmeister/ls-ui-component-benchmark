@@ -12,7 +12,11 @@ export class ApplicationHeader extends TonicComponent {
 
             <div class="main-area">
                 <book-title></book-title>
-                <page-numbers></page-numbers>
+
+                <div>
+                    <a href="#/unknown-page" class="link">Trigger 404 Page</a>
+                    <page-numbers></page-numbers>
+                </div>
             </div>
         `;
     }

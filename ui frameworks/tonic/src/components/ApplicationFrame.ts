@@ -15,6 +15,8 @@ export function getApplicationFrame(): ApplicationFrame {
     return app as ApplicationFrame;
 }
 
+type PageNames = "BookContentPage" | "NotFoundPage";
+
 /**
  * Root component of the application. It defines a very basic UI for this practical test,
  * consisting of an application header, a page preview and two buttons to navigate within
@@ -103,17 +105,22 @@ export class ApplicationFrame extends TonicComponent {
      * @param pageName Name of the requested page
      * @param properties HTML attributes or other data extracted from the URL
      */
-    #gotoPage(pageName: string, properties?: Properties) {
+    #gotoPage(pageName: PageNames, properties?: Properties) {
         let rerender = false;
 
-        if (pageName === "BookContentPage") {
-            this.#pageTemplate = this.html`<book-content-page></book-content-page>`;
-            if (properties?.page) this.book.gotoPage(properties.page);
-        } else if (pageName === "NotFoundPage") {
-            this.#pageTemplate = this.html`<not-found-page ...${properties}></not-found-page>`;
-            rerender = true;
-        } else {
-            return;
+        switch (pageName) {
+            case "BookContentPage":
+                this.#pageTemplate = this.html`<book-content-page></book-content-page>`;
+                if (properties?.page) this.book.gotoPage(properties.page);
+                break;
+
+            case "NotFoundPage":
+                this.#pageTemplate = this.html`<not-found-page ...${properties}></not-found-page>`;
+                rerender = true;
+                break;
+            
+            default:
+                console.error(`This should not happen! Unknown page: ${pageName}`);
         }
 
         if (this.#pageName !== pageName || rerender) {

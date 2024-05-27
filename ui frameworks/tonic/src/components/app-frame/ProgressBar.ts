@@ -1,4 +1,4 @@
-import { TonicComponent }      from "../../TonicComponent.js";
+import { TonicComponent }      from "../../utils/TonicComponent.js";
 import { getApplicationFrame } from "../ApplicationFrame.js";
 import { ApplicationFrame }    from "../ApplicationFrame.js";
 

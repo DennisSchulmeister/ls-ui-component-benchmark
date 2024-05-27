@@ -20,6 +20,10 @@ Thoughts and Learnings
   So we cannot pass callback functions etc. from a parent component to its children.
   Passing javascript data objects is possible but somewhat expensive due to the
   JSON marshalling.
+
+  Also weird things happen, when property values are not strings. Especially when
+  passed in HTML template strings they often get converted to strange `value__type`
+  strings. The safes thing is to define properties always as strings.
   
 * Components can manage their own state using plain object attributes. It is not
   necessary to use Tonic's `this.state` object which is just a key/value-pair on

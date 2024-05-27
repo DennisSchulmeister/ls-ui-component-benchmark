@@ -1,9 +1,12 @@
 import type { TonicTemplate } from "@socketsupply/tonic";
 import type { Properties}     from "@socketsupply/tonic";
+import type { LanguageCode }  from "../utils/i18n.js";
 
-import { TonicComponent }     from "../TonicComponent.js";
-import { Observable }         from "../observable.js";
-import { Router }             from "../router.js"
+import { TonicComponent }     from "../utils/TonicComponent.js";
+import { Observable }         from "../utils/observable.js";
+import { Router }             from "../utils/router.js"
+import { _ }                  from "../utils/i18n.js";
+import * as i18n              from "../utils/i18n.js";
 
 import "./ApplicationFrame.less";
 
@@ -27,7 +30,7 @@ export class ApplicationFrame extends TonicComponent {
      * Global application state with a simulated study book
      */
     readonly book = {
-        title:       new Observable<string>("Title of the study book"),
+        title:       new Observable<string>(_("StudyBook/Title")),
         currentPage: new Observable<number>(1),
         totalPages:  new Observable<number>(10),
 
@@ -68,6 +71,11 @@ export class ApplicationFrame extends TonicComponent {
         },
     };
 
+    // Public export of the i18n module so that study book authors
+    // can access and extend the translations
+    i18n = i18n;
+    language = new Observable<LanguageCode>("");
+
     #router: Router;
     #pageTemplate?: TonicTemplate;
     #pageName: string = "";
@@ -93,6 +101,15 @@ export class ApplicationFrame extends TonicComponent {
         }]);
 
         this.#router.start();
+
+        // Rerender on changed language code
+        this.language.value = i18n.getCurrentLanguages()[0];
+
+        this.language.bindFunction((newValue) => {
+            i18n.setCurrentLanguages(newValue, "en");
+            this.book.title.value = _("StudyBook/Title");
+            this.reRender();
+        });
     }
 
     /**

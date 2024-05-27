@@ -1,22 +1,24 @@
-import { TonicComponent } from "../../TonicComponent.js";
+import { TonicComponent } from "../../utils/TonicComponent.js";
+import { _ }              from "../../utils/i18n.js";
+
 import "./NotFoundPage.less";
 
-type Properties = {
+type NotFoundPageProperties = {
     url: string;
 };
 
 /**
  * Simple 404 not found page
  */
-export class NotFoundPage extends TonicComponent<Properties> {
+export class NotFoundPage extends TonicComponent<NotFoundPageProperties> {
     render() {
         return this.html`
-            <h1>Page not found</h1>
+            <h1>${_("404-Page/Title")}</h1>
             <p>
-                We are terribly sorry, but the requested page <b>${this.props.url}</b> cannot be found.
+                ${this.html(_("404-Page/Message1", this.props))}
             </p>
             <p>
-                Maybe go back to the <a href="#/">home page</a> and grab some other cheese, instead?
+                ${this.html(_("404-Page/Message2"))}
             </p>
             <img src="img/page-not-found.png" alt="">
         `;

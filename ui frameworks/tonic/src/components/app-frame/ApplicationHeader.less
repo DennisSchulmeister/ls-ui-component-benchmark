@@ -2,13 +2,22 @@ application-header {
     background: rgb(235, 235, 235);
 
     .main-area {
-        padding: 1em;
+        padding: 0.5em;
 
         display: flex;
         justify-content: space-between;
+        align-items: center;
     }
 
-    .link {
-        margin-right: 1em;
+    .side-by-side {
+        display: flex;
+        align-items: center;
+        gap: 1em;
+    }
+
+    @media all and (width < 700px) {
+        .side-by-side {
+            flex-direction: column;
+        }
     }
 }

@@ -1,6 +1,7 @@
-import { TonicComponent }      from "../../TonicComponent.js";
+import { TonicComponent }      from "../../utils/TonicComponent.js";
 import { getApplicationFrame } from "../ApplicationFrame.js";
 import { ApplicationFrame }    from "../ApplicationFrame.js";
+import { _ }                   from "../../utils/i18n.js";
 
 import "./BookContentPage.less";
 
@@ -29,16 +30,16 @@ export class BookContentPage extends TonicComponent {
 
         return this.html`
             <div class="main-area">
-                <page-preview page=${this.#app.book.currentPage.value}></page-preview>
+                <page-preview page=${this.#app.book.currentPage.value.toString()}></page-preview>
             </div>
             
             <div class="button-row">
                 <simple-button data-action="prev-page" type="primary" disabled="${prevDisabled.toString()}">
-                    <span>Previous</span>
+                    <span>${_("BookContentPage/Button/Previous")}</span>
                 </simple-button>
 
                 <simple-button data-action="next-page" type="primary" disabled="${nextDisabled.toString()}">
-                    <span>Next</span>
+                    <span>${_("BookContentPage/Button/Next")}</span>
                 </simple-button>
             </div>
         `;

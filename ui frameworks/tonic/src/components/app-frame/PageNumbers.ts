@@ -1,4 +1,4 @@
-import { TonicComponent }      from "../../TonicComponent.js";
+import { TonicComponent }      from "../../utils/TonicComponent.js";
 import { getApplicationFrame } from "../ApplicationFrame.js";
 import { ApplicationFrame }    from "../ApplicationFrame.js";
 
@@ -8,7 +8,7 @@ import { ApplicationFrame }    from "../ApplicationFrame.js";
  * Similar to this: 1 / 3
  */
 export class PageNumbers extends TonicComponent {
-    #app: ApplicationFrame = getApplicationFrame();;
+    #app: ApplicationFrame = getApplicationFrame();
 
     constructor() {
         super();

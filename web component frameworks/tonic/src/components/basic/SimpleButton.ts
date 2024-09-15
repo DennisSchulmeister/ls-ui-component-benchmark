@@ -1,7 +1,7 @@
 import type { Properties } from "@socketsupply/tonic";
 
 import { TonicComponent }  from "../../utils/TonicComponent.js";
-import "./SimpleButton.less";
+import "./SimpleButton.css";
 
 type SimpleButtonProperties = {
     type?: "" | "primary";

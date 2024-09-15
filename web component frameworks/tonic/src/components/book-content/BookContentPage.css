@@ -1,9 +1,9 @@
 book-content-page {
-    // Fill complete main area
+    /* Fill complete main area */
     flex: 1;
     align-self: stretch;
 
-    // Center content on screen
+    /* Center content on screen */
     display: flex;
     flex-direction: column;
     justify-content: space-between;

@@ -3,7 +3,7 @@ import { getApplicationFrame } from "../ApplicationFrame.js";
 import { ApplicationFrame }    from "../ApplicationFrame.js";
 import { _ }                   from "../../utils/i18n.js";
 
-import "./BookContentPage.less";
+import "./BookContentPage.css";
 
 /**
  * Main content area component to render the currently visible page of a study book.

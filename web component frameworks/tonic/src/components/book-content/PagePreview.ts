@@ -1,5 +1,5 @@
 import { TonicComponent } from "../../utils/TonicComponent.js";
-import "./PagePreview.less";
+import "./PagePreview.css";
 
 type PagePreviewProperties = {
     page: string;

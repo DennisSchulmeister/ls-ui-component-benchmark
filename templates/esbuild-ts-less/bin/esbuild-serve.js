@@ -1,11 +1,8 @@
-"use strict";
-
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import * as esbuild from "esbuild";
-import { lessLoader } from "esbuild-plugin-less";
 import path from "path";
 
 let ctx = await esbuild.context({
@@ -13,7 +10,7 @@ let ctx = await esbuild.context({
     bundle: true,
     outfile: path.join(__dirname, "..", "static", "_bundle.js"),
     sourcemap: true,
-    plugins: [lessLoader()],
+    plugins: [],
     loader: {
         ".svg": "text",
         ".ttf": "dataurl",

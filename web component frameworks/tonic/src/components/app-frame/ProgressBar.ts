@@ -2,7 +2,7 @@ import { TonicComponent }      from "../../utils/TonicComponent.js";
 import { getApplicationFrame } from "../ApplicationFrame.js";
 import { ApplicationFrame }    from "../ApplicationFrame.js";
 
-import "./ProgressBar.less";
+import "./ProgressBar.css";
 
 /**
  * Progress bar the grows wider the more the current page reaches the end of the

@@ -1,5 +1,5 @@
 simple-button {
-    // Regular button
+    /* Regular button */
     --simple-button-normal-background:    rgb(220, 220, 220);
     --simple-button-normal-color:         rgb(107, 107, 107);
     --simple-button-hover-background:     rgb(235, 235, 235);
@@ -31,7 +31,7 @@ simple-button {
         }
     }
 
-    // Primary button
+    /* Primary button */
     &[type="primary"] {
         --simple-button-normal-background:    rgb(14, 111, 180);
         --simple-button-normal-color:         rgb(255, 255, 255);

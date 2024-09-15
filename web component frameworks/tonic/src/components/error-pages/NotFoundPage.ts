@@ -1,7 +1,7 @@
 import { TonicComponent } from "../../utils/TonicComponent.js";
 import { _ }              from "../../utils/i18n.js";
 
-import "./NotFoundPage.less";
+import "./NotFoundPage.css";
 
 type NotFoundPageProperties = {
     url: string;

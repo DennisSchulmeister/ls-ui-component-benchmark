@@ -8,7 +8,7 @@ import { Router }             from "../utils/router.js"
 import { _ }                  from "../utils/i18n.js";
 import * as i18n              from "../utils/i18n.js";
 
-import "./ApplicationFrame.less";
+import "./ApplicationFrame.css";
 
 /**
  * @returns The global application instance

@@ -6,7 +6,7 @@ import { ApplicationFrame }      from "../ApplicationFrame.js";
 import { _ }                     from "../../utils/i18n.js";
 import { getAvailableLanguages } from "../../utils/i18n.js";
 
-import "./ApplicationHeader.less";
+import "./ApplicationHeader.css";
 
 /**
  * Application header that is permanently visible at the top of the screen. Shows the

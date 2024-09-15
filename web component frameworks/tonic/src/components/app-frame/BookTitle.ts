@@ -2,7 +2,7 @@ import { TonicComponent }      from "../../utils/TonicComponent.js";
 import { getApplicationFrame } from "../ApplicationFrame.js";
 import { ApplicationFrame }    from "../ApplicationFrame.js";
 
-import "./BookTitle.less";
+import "./BookTitle.css";
 
 /**
  * Simple component to render the current book title.

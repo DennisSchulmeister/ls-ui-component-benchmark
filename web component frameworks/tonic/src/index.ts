@@ -1,4 +1,4 @@
-import "./index.less";
+import "./index.css";
 
 import "./components/ApplicationFrame.js";
 import "./components/app-frame/ApplicationHeader.js";

@@ -1,14 +1,41 @@
 UI Component Benchmark: Tonic
 =============================
 
-This is a minimal project based on the esbuild + TypeScrip template in the same
-repository. It uses the @socketsupply/tonic Tonic Framework, whihc is a very
+This is a minimal project based on the esbuild + TypeScript template in the same
+repository. It uses the @socketsupply/tonic Tonic Framework, which is a very
 lightweight web component wrapper.
 
 Steps how this project was set up:
 
 1. Copy the esbuild + TypeScript template
 2. Run `npm add -D @socketsupply/tonic`
+
+Summary
+-------
+
+### Basic Component Definition
+
+```ts
+import Tonic from '@socketsupply/tonic'
+
+class MyGreeting extends Tonic {
+  render () {
+    return this.html`<div>Hello, World.</div>`
+  }
+}
+```
+
+### Property Declaration
+
+### DOM Event Handling
+
+### Reactive Rendering
+
+### Routing
+
+### Translations
+
+
 
 Thoughts and Learnings
 ----------------------
@@ -29,7 +56,7 @@ Thoughts and Learnings
   necessary to use Tonic's `this.state` object which is just a key/value-pair on
   the `Tonic` class using the element's ID, that must be manually cleaned up.
 
-  The only reason to use this would probably be to update the state of an elements
+  The only reason to use this would probably be to update the state of an element
   from outside the element.
 
 * How to handle global state that needs to update many components deep in the DOM tree?

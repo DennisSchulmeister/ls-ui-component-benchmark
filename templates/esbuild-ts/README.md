@@ -1,13 +1,13 @@
 UI Component Benchmark: Lit
 ===========================
 
-This is a minimal project based on the esbuild + TypeScript template in the same
-repository. It uses Lit Framework, which is a rather lightweight web component wrapper.
+This is a minimal project based on the esbuild + typescript template in
+the same repository. It uses the XYZ framework.
 
 Steps how this project was set up:
 
-1. Copy the esbuild + TypeScript template
-2. Run `npm add -D lit`
+1. Copy the esbuild+typescript template
+2. Run `npm add -D XYZ`
 
 Summary
 -------

@@ -20,11 +20,15 @@ TODO
 
 TODO
 
-### DOM Event Handling
+### Nested Components
 
 TODO
 
 ### Reactive Rendering
+
+TODO
+
+### DOM Event Handling
 
 TODO
 
@@ -38,5 +42,10 @@ TODO
 
 Thoughts and Learnings
 ----------------------
+
+TODO
+
+Conclusion
+----------
 
 TODO

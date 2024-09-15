@@ -1,7 +1,7 @@
 /**
  * Utility script to copy static assets from the source directory into the build directory.
-  * For this the following settings can be made in file `package.json`:
- * 
+ * For this the following settings can be made in file `package.json`:
+ *
  * ````js
  * {
  *     "config": {
@@ -27,13 +27,13 @@ shell.mkdir("-p", buildDir);
 
 for (let file of shell.ls("-R", sourceDir)) {
     if (file.startsWith("_") || file.includes("/_")) continue;
-    
+
     let sourcePath = path.join(sourceDir, file);
     let sourceStat = fs.statSync(sourcePath);
     let buildPath  = path.join(buildDir, file);
-    
+
     console.log(file, "=>", buildPath);
-    
+
     if (sourceStat.isDirectory()) {
         shell.mkdir("-p", buildPath);
     } else {

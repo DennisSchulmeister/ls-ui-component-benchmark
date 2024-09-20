@@ -18,6 +18,9 @@ $ npm create svelte@latest svelte
 │  none
 │
 └  Your project is ready!
+
+$ cd svelte
+$ npm i
 ```
 
 Summary

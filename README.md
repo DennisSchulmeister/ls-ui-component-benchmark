@@ -11,15 +11,15 @@ Description
 
 This is a pre-study for the next version of [lecture-slides.js](https://github.com/DennisSchulmeister/lecture-slides.js).
 The goal is to rewrite the frontend application with a more modern architecture
-either user web components or one of the better known component frameworks like
+either using web components or one of the better known component frameworks like
 Angular or React. For this the implications in terms of code complexity, bundle
 size, maintainability etc. have to be understood. The research design is:
 
-1. Research suitable candidates of each category
+1. Identify suitable candidates of each category
 2. Numerically rank the candidates within each category (see below)
 3. Find the best candidate of each category according to the total score
 4. Implement a medium-sized mockup with both chosen frameworks
-5. Numerically evaluate the final results to find the ultimate winner
+5. Numerically evaluate the final results to find the ultimate winner (see more below)
 
 Pre-selection
 -------------

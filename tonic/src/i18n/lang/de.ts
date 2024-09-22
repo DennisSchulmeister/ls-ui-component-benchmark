@@ -7,7 +7,7 @@ const i18n: I18N = {
 
     BookContentPage: {
         Button: {
-            Previous: "Zurück",
+            Prev: "Zurück",
             Next: "Weiter",
         }
     },

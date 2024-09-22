@@ -26,6 +26,24 @@ language.subscribe(async function(newLanguage: string) {
 });
 
 /**
+ * Utility function to replace placeholders in the form of `$key$` in the given
+ * text with the property of the object given in the second parameter.
+ * 
+ * @param text Original text
+ * @param values Key/values to insert
+ * @return Text with replaced placeholders
+ */
+export function _(text: string, values: any): string {
+    let result = text;
+
+    for (let key of Object.keys(values) || []) {
+        text = text.replaceAll(`\$${key}\$`, values[key]);
+    }
+
+    return result;
+}
+
+/**
  * Create a new message catalogue from the given langauge and the fallback language.
  * 
  * @param newLanguage Language code

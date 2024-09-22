@@ -6,7 +6,7 @@ export default {
 
     BookContentPage: {
         Button: {
-            Previous: "Previous",
+            Prev: "Previous",
             Next: "Next",
         }
     },

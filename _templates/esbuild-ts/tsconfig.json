@@ -27,8 +27,8 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
 
-        // Where to find external type declarations
-        "typeRoots": ["node_modules/@types"]
+        // // Where to find external type declarations
+        // "typeRoots": ["node_modules/@types"]
     },
 
     "include": [

@@ -11,6 +11,7 @@ esbuild.build({
     minify: true,
     outfile: path.join(__dirname, "..", "build", "_bundle.js"),
     sourcemap: true,
+    format: "esm",
     plugins: [],
     loader: {
         ".svg": "text",

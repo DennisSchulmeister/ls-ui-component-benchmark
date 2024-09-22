@@ -10,6 +10,7 @@ let ctx = await esbuild.context({
     bundle: true,
     outfile: path.join(__dirname, "..", "static", "_bundle.js"),
     sourcemap: true,
+    format: "esm",
     plugins: [],
     loader: {
         ".svg": "text",

@@ -1,4 +1,4 @@
-import { TonicComponent } from "../../utils/TonicComponent.js";
+import { TonicComponent } from "../../../utils/TonicComponent.js";
 import "./PagePreview.css";
 
 type PagePreviewProperties = {

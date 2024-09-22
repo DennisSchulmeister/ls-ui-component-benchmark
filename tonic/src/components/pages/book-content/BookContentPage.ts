@@ -1,7 +1,7 @@
-import { TonicComponent }      from "../../utils/TonicComponent.js";
-import { getApplicationFrame } from "../ApplicationFrame.js";
-import { ApplicationFrame }    from "../ApplicationFrame.js";
-import { _ }                   from "../../utils/i18n.js";
+import { TonicComponent }      from "../../../utils/TonicComponent.js";
+import { getApplicationFrame } from "../../ApplicationFrame.js";
+import { ApplicationFrame }    from "../../ApplicationFrame.js";
+import { _ }                   from "../../../utils/i18n.js";
 
 import "./BookContentPage.css";
 

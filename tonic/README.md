@@ -1,6 +1,18 @@
 UI Component Benchmark: Tonic
 =============================
 
+1. [Summary](#summary)
+    1. [Basic Component Definition](#basic-component-definition)
+    1. [Property Declaration](#property-declaration)
+    1. [Nested Components](#nested-components)
+    1. [Reactive Rendering](#reactive-rendering)
+    1. [DOM Event Handling](#dom-event-handling)
+    1. [Routing](#routing)
+    1. [Translations](#translations)
+1. [Thoughts and Learnings](#thoughts-and-learnings)
+1. [Conclusion](#conclusion)
+
+
 This is a minimal project based on the esbuild + TypeScript template in the same
 repository. It uses the @socketsupply/tonic Tonic Framework, which is a very
 lightweight web component wrapper.
@@ -127,17 +139,15 @@ de-registration when a component is destroyed, a reactive-like model can be achi
 // its observed values change. "As deep in the DOM as possible" to only rerender
 // the small and cheap components, not the huge composites.
 export class PageNumbers extends TonicComponent {
-    #app: ApplicationFrame = getApplicationFrame();
-
     constructor() {
         super();
 
-        this.bindFunction(this.#app.book.currentPage, this.reRender.bind(this));
-        this.bindFunction(this.#app.book.totalPages, this.reRender.bind(this));
+        this.bindFunction(book.currentPage, this.reRender.bind(this));
+        this.bindFunction(book.totalPages, this.reRender.bind(this));
     }
 
     render() {
-        return this.html`${this.#app.book.currentPage.value.toString()} / ${this.#app.book.totalPages.value.toString()}`;
+        return this.html`${book.currentPage.value.toString()} / ${book.totalPages.value.toString()}`;
     }
 }
 
@@ -152,18 +162,16 @@ export class PagePreview extends TonicComponent<PagePreviewProperties> {
 
 // Parent with custom rerendering
 export class BookContentPage extends TonicComponent {
-    #app: ApplicationFrame = getApplicationFrame();
-
     constructor() {
         super();
 
         // Trigger rerendering, when the page number changes
-        this.bindFunction(this.#app.book.currentPage, this.reRender.bind(this));
+        this.bindFunction(book.currentPage, this.reRender.bind(this));
     }
 
     render() {
         return this.html`
-            <page-preview page=${this.#app.book.currentPage.value.toString()}></page-preview>
+            <page-preview page=${book.currentPage.value.toString()}></page-preview>
             ...
         `;
     }
@@ -174,7 +182,7 @@ export class BookContentPage extends TonicComponent {
 
 DOM events are usually captured via special methods provided by Tonic. It is recommended
 to catch events at the level of the web component instead of its individual rendered children.
-This optimized memory and execution time, since the child nodes will be destroyed with every
+This optimizes memory and execution time, since the child nodes will be destroyed with every
 rerender. Also much less event listeners need to be created.
 
 ```ts
@@ -279,40 +287,39 @@ export class ApplicationFrame extends TonicComponent {
 }
 ```
 
-Not as clean and simple as the `Router` component, but it doesn't polute the DOM
+Not as clean and simple as a `Router` component, but it doesn't polute the DOM
 and is very flexible.
 
 ### Translations
 
 Neither handled by the framework. Here we roll our own solution based on our own
 `Observable` class (to "observe" the currently set language) and a bit of custom
-code in `utils/i18n.ts`:
+code in `stores/i18n.ts`:
 
 ```ts
 // Accessing translations
-import { _ } from "../../utils/i18n.js";
+import { i18n }           from "../../../stores/i18n.js";
+import { _ }              from "../../../stores/i18n.js";
 
 export class NotFoundPage extends TonicComponent<NotFoundPageProperties> {
     render() {
         return this.html`
-            <h1>${_("404-Page/Title")}</h1>
+            <h1>${i18n.Error404.Title}</h1>
+            <p>
+                <!-- With placeholder replacement and no HTML escaping -->
+                ${this.html(_(i18n.Error404.Message1, this.props))}
+            </p>
             ...
         `;
     }
 }
 
-// i18n setup in ApplicationFrame
+// Rerender the whole UI when the language changes
 export class ApplicationFrame extends TonicComponent {
-    i18n = i18n;
-    language = new Observable<LanguageCode>("");
-
     constructor() {
         // Rerender on changed language code
-        this.language.value = i18n.getCurrentLanguages()[0];
-
-        this.language.bindFunction((newValue) => {
-            i18n.setCurrentLanguages(newValue, "en");
-            this.book.title.value = _("StudyBook/Title");
+        language.bindFunction((newValue) => {
+            book.title.value = i18n.StudyBook.Title;
             this.reRender();
         });
     }
@@ -336,7 +343,7 @@ Thoughts and Learnings
 
   Also weird things happen, when property values are not strings. Especially when
   passed in HTML template strings they often get converted to strange `value__type`
-  strings. The safes thing is to define properties always as strings.
+  strings. The safest thing to do is to always pass properties as strings.
   
 * Components can manage their own state using plain object attributes. It is not
   necessary to use Tonic's `this.state` object which is just a key/value-pair on
@@ -346,15 +353,14 @@ Thoughts and Learnings
   from outside the element.
 
 * How to handle global state that needs to update many components deep in the DOM tree?
-  Extract it into globally accessible `Observable` objects (e.g. accessible via the global
-  `ApplicationFrame` instance to make it publicly available and avoid too many imports).
-  Then observe the values to trigger rerendering or manual DOM updates as deep in the DOM
-  as possible.
+  Thats what "stores" are for in other frameworks. But we can achieve the same with our
+  own `Observable` class, which basically is a store on steroids.
 
-  Why as deep in the DOM as possible? To minimize costly DOM access. Rerendering a small
-  component that simply wraps a value is usually cheaper (e.g the `<book-title` which
-  essentially is just a `<span>`) then rerendering a larger composite component (like the
-  `<application-header>` or even the whole `<application-frame>`).
+  Collect the global states in `stores/*.ts` files and export `Observable` objects there.
+  Then observe these values as deep in the DOM as possible to update the UI or simply
+  rerender components. By doing this near the leaf-nodes in the DOM this is cheap.
+  Rerendering destroy and recreates the DOM nodes, but since we are not dealing with
+  large composite elements here, this is okay.
 
   To support this pattern, a intermediate class called `TonicComponent` has been developed,
   that extends the basic `Tonic` class but adds book-keeping for the observables.
@@ -363,12 +369,11 @@ Thoughts and Learnings
   the `hashchange` event is a good approach. This allows to host the application on all servers
   without special consideration and is quite easy to handle client-side.
 
-  Unlike frameworks like React, that use a virtual DOM, building a router component, that
-  based on the URL simply decides whether to render its children or not, can be done for
-  special use cases. But for an app-wide routing this is most-likely not ideal, as the
-  router component will remain in the DOM between the parent and the actual content.
-  This must be considered in the stylesheets.
-
+  Building a router component, that simply decides whether to render some of its children
+  of dynamically creates components, can be done. But since every component is a full
+  web component this would leave intermediate elements like `<Router>` in the DOM, which
+  is inconvenient for styling.
+  
   For this reason we use a different, probably less clean, approach here. The router class
   simply executes callback methods from the `ApplicationFrame` component that trigger
   conditional rerendering.

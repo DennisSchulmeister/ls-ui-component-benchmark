@@ -1,4 +1,5 @@
 import "./index.css";
+import "./global.js";
 
 import "./components/ApplicationFrame.js";
 import "./components/app-frame/ApplicationHeader.js";

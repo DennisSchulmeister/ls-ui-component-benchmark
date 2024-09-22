@@ -1,5 +1,5 @@
 import "./index.css";
-import ApplicationFrame from "./components/ApplicationFrame.svelte";
+import "./global.js";
 
-// Kick-start application
+import ApplicationFrame from "./components/ApplicationFrame.svelte";
 new ApplicationFrame({ target: document.body });

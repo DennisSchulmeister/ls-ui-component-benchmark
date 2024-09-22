@@ -29,7 +29,7 @@ const languages: Languages = {
         "404-Page/TriggerLink": "Trigger 404 Page",
         "404-Page/Title":       "Page not found",
         "404-Page/Message1":    "We are terribly sorry, but the requested page <b>$url$</b> cannot be found.",
-        "404-Page/Message2":    `Maybe go back to the <a href="#/">home page</a> and grab some other cheese, instead?`,
+        "404-Page/Message2":    'Maybe go back to the <a href="#/">home page</a> and grab some other cheese, instead?',
     },
 
     de: {
@@ -41,7 +41,7 @@ const languages: Languages = {
         "404-Page/TriggerLink": "404 Seite auslösen",
         "404-Page/Title":       "Seite nicht gefunden",
         "404-Page/Message1":    "Es tut uns fürchterlich Leid, aber die angeforderte Seite <b>$url$</b> wurde nicht gefunden.",
-        "404-Page/Message2":    `Wollen Sie stattdessen zur <a href="#/">Startseite</a> zurückgehen und sich einen anderen Käse schnappen?`,
+        "404-Page/Message2":    'Wollen Sie stattdessen zur <a href="#/">Startseite</a> zurückgehen und sich einen anderen Käse schnappen?',
     }
 };
 

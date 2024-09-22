@@ -1,24 +1,23 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
 import * as esbuild from "esbuild";
-import path from "path";
 
 import sveltePlugin from "esbuild-svelte";
-import sveltePreprocess from "svelte-preprocess";
+import { sveltePreprocess } from "svelte-preprocess";
 
 let ctx = await esbuild.context({
-    entryPoints: [path.join(__dirname, "..", "src", "index.js")],
+    entryPoints: [`src/index.ts`, `src/i18n/lang/**/*.ts`],
+    outdir: "static/_bundle/",
+
     bundle: true,
-    outfile: path.join(__dirname, "..", "static", "_bundle.js"),
     sourcemap: true,
     format: "esm",
+
     mainFields: ["svelte", "browser", "module", "main"],
     conditions: ["svelte", "browser"],
+
     plugins: [sveltePlugin({
         preprocess: sveltePreprocess(),
     })],
+
     loader: {
         ".svg": "text",
         ".ttf": "dataurl",
@@ -32,7 +31,7 @@ let ctx = await esbuild.context({
 });
 
 let { host, port } = await ctx.serve({
-    servedir: path.join(__dirname, "..", "static"),
+    servedir: "static",
     port: 8888,
 });
 

@@ -1,18 +1,16 @@
 {
-  "name": "@dschulmeis/template-esbuild-js-less",
+  "name": "@dschulmeis/template-esbuild-js",
   "version": "1.0.0",
-  "description": "esbuild + JavaScript + LESS | Template",
+  "description": "esbuild + JavaScript | Template",
   "author": "Dennis Schulmeister-Zimolong",
   "type": "module",
   "scripts": {
     "clean": "node bin/clean.js",
-    "build": "npm run clean && node bin/build-static.mjs && node bin/esbuild-bundle.js",
+    "build": "npm run clean && node bin/esbuild-bundle.js",
     "start": "node bin/esbuild-serve.js"
   },
   "config": {
-    "src_dir": "src",
-    "static_dir": "static",
-    "build_dir": "build"
+    "clean_dirs": "static/_bundle"
   },
   "devDependencies": {
     "esbuild": "^0.21.2",

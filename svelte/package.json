@@ -6,14 +6,12 @@
   "type": "module",
   "scripts": {
     "clean": "node bin/clean.js",
-    "build": "npm run clean && node bin/build-static.mjs && node bin/esbuild-bundle.js && tsc",
+    "build": "npm run clean && node bin/esbuild-bundle.js && npm run check",
     "check": "tsc && svelte-check --tsconfig tsconfig.json --fail-on-warnings",
     "start": "conc -r \"tsc -w\" \"node bin/esbuild-serve.js\""
   },
   "config": {
-    "src_dir": "src",
-    "static_dir": "static",
-    "build_dir": "build"
+    "clean_dirs": "static/_bundle"
   },
   "devDependencies": {
     "@tsconfig/svelte": "^5.0.4",

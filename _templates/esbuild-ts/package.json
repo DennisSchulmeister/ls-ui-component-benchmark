@@ -1,19 +1,17 @@
 {
-  "name": "@dschulmeis/template-esbuild-ts-less",
+  "name": "@dschulmeis/template-esbuild-ts",
   "version": "1.0.0",
-  "description": "esbuild + TypeScript + LESS | Template",
+  "description": "esbuild + TypeScript | Template",
   "author": "Dennis Schulmeister-Zimolong",
   "type": "module",
   "scripts": {
     "clean": "node bin/clean.js",
-    "build": "npm run clean && node bin/build-static.mjs && node bin/esbuild-bundle.js && tsc",
+    "build": "npm run clean && node bin/esbuild-bundle.js && npm run check",
     "check": "tsc",
     "start": "conc -r \"tsc -w\" \"node bin/esbuild-serve.js\""
   },
   "config": {
-    "src_dir": "src",
-    "static_dir": "static",
-    "build_dir": "build"
+    "clean_dirs": "static/_bundle"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

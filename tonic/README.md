@@ -12,7 +12,6 @@ UI Component Benchmark: Tonic
 1. [Thoughts and Learnings](#thoughts-and-learnings)
 1. [Conclusion](#conclusion)
 
-
 This is a minimal project based on the esbuild + TypeScript template in the same
 repository. It uses the @socketsupply/tonic Tonic Framework, which is a very
 lightweight web component wrapper.

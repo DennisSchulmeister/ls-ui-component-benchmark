@@ -1,8 +1,26 @@
 UI Component Benchmark: Svelte
 ==============================
 
+1. [Project Setup](#project-setup)
+1. [Summary](#summary)
+    1. [Basic Component Definition](#basic-component-definition)
+    1. [Logic Blocks](#logic-blocks)
+    1. [Reactive Rendering](#reactive-rendering)
+    1. [Property Declaration](#property-declaration)
+    1. [Nested Components](#nested-components)
+    1. [DOM Event Handling](#dom-event-handling)
+    1. [Routing](#routing)
+    1. [Translations](#translations)
+1. [Thoughts and Learnings](#thoughts-and-learnings)
+1. [Conclusion](#conclusion)
+
 This is a minimal project based on the Svelte framework, using our esbuild template
-and `esbuild-svelte` instead of `SvelteKit`. Steps how this project was set up:
+and `esbuild-svelte` instead of `SvelteKit`.
+
+Project Setup
+-------------
+
+Steps how this project was set up:
 
 1. Copy the esbuild + TypeScript template
 
@@ -142,7 +160,6 @@ More details can be found in the other sections.
     }
 </script>
 
-
 <!--
 @component
 Here's some documentation for this component. It will show up on hover.
@@ -178,7 +195,7 @@ Hello, {name}!
 </style>
 ```
 
-### Logic blocks
+### Logic Blocks
 
 HTML templates can use `{#if}`, `{#each}` etc. for conditional logic:
 

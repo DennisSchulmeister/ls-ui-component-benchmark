@@ -1,5 +1,11 @@
+<script lang="ts">
+    type parameters = {pageNumber?: number};
+    export let params:parameters = {};
+
+    $: pageNumber = params.pageNumber || 1;
+</script>
 <p>
-    This will become the book content page ...
+    Book page: {pageNumber}
 </p>
 
 <style>

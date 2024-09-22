@@ -1,5 +1,5 @@
 export type Validator<T> = (newValue: T, oldValue: T) => boolean;
-export type Callback<T> = (newValue: T, oldValue: T) => void;
+export type Callback<T> = (newValue: T, oldValue: T) => void|Promise<void>;
 
 type Binding<T> = {
     callback?: Callback<T>,
@@ -121,10 +121,10 @@ export class Observable<T> {
     /**
      * Call all observers in the order they were bound.
      */
-    _callObservers(newValue: T, oldValue: T) {
+    async _callObservers(newValue: T, oldValue: T) {
         for (let binding of this.#bindings.values()) {
             if (binding.callback) {
-                binding.callback(newValue, oldValue);
+                await binding.callback(newValue, oldValue);
             }
 
             if (binding.element) {

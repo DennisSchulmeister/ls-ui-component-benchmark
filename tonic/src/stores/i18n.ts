@@ -41,13 +41,11 @@ language.bindFunction(async function(newValue) {
  * @return Text with replaced placeholders
  */
 export function _(text: string, values: Properties): string {
-    let result = text;
-
     for (let key of Object.keys(values) || []) {
         text = text.replaceAll(`\$${key}\$`, values[key]);
     }
 
-    return result;
+    return text;
 }
 
 /**

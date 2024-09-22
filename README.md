@@ -2,6 +2,7 @@ Lecture-Slides.js: Component Framework Benchmark
 ================================================
 
 1. [Description](#description)
+1. [Mockups](#mockups)
 1. [Pre-selection](#pre-selection)
 1. [Mock Implementation](#mock-implementation)
 1. [Copyright](#copyright)
@@ -20,6 +21,16 @@ size, maintainability etc. have to be understood. The research design is:
 3. Find the best candidate of each category according to the total score
 4. Implement a medium-sized mockup with both chosen frameworks
 5. Numerically evaluate the final results to find the ultimate winner (see more below)
+
+Mockups
+-------
+
+The following images show a sketch of the demo application. Each implementation tries
+to mimic this UI comparable features and code structure.
+
+![Englisch Mockup](_mockup/ui-mockup-english.png)
+
+![German Mockup](_mockup/ui-mockup-german.png)
 
 Pre-selection
 -------------

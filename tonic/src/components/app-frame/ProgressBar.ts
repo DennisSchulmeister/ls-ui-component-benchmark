@@ -1,6 +1,5 @@
-import { TonicComponent }      from "../../utils/TonicComponent.js";
-import { getApplicationFrame } from "../ApplicationFrame.js";
-import { ApplicationFrame }    from "../ApplicationFrame.js";
+import { TonicComponent } from "../../utils/TonicComponent.js";
+import * as book          from "../../stores/book.js";
 
 import "./ProgressBar.css";
 
@@ -9,17 +8,15 @@ import "./ProgressBar.css";
  * currently open study book.
  */
 export class ProgressBar extends TonicComponent {
-    #app: ApplicationFrame = getApplicationFrame();
-    
     constructor() {
         super();
 
-        this.bindFunction(this.#app.book.currentPage, this.updateWidth.bind(this));
-        this.bindFunction(this.#app.book.totalPages, this.updateWidth.bind(this));
+        this.bindFunction(book.currentPage, this.updateWidth.bind(this));
+        this.bindFunction(book.totalPages, this.updateWidth.bind(this));
     }
 
     #calcWidth(): number {
-        return 100.0 * this.#app.book.currentPage.value / this.#app.book.totalPages.value;
+        return 100.0 * book.currentPage.value / book.totalPages.value;
     }
 
     render() {

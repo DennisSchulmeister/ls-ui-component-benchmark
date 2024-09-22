@@ -1,16 +1,14 @@
-import type {I18N}        from "./i18n/index.js";
+import type {Properties}  from "@socketsupply/tonic";
+import type {I18N}        from "../i18n/index.js";
 
-import {fallbackLanguage} from "./i18n/index.js";
-import {defaultLanguage}  from "./i18n/index.js";
-import {writable}         from "svelte/store";
-import {readable}         from "svelte/store";
-import {get}              from "svelte/store";
+import {fallbackLanguage} from "../i18n/index.js";
+import {defaultLanguage}  from "../i18n/index.js";
+import {Observable}       from "../utils/observable.js";
 
-export {languages}        from "./i18n/index.js";
-export {defaultLanguage}  from "./i18n/index.js";
-export {fallbackLanguage} from "./i18n/index.js";
+export {languages}        from "../i18n/index.js";
+export {defaultLanguage}  from "../i18n/index.js";
+export {fallbackLanguage} from "../i18n/index.js";
 
-let setTranslations: (value: I18N) => void;
 let customLanguages: any = {};
 
 /**
@@ -18,35 +16,21 @@ let customLanguages: any = {};
  * This is just a deeply structured key/value object, that can be directly
  * accessed with `$i18n.someKey` in the UI components.
  */
-export const i18n = readable(await createTranslations(defaultLanguage), function(set) {
-    setTranslations = set;
-});
-
-/**
- * Utility method for study book authors to get the current message catalogue.
- * @returns The current message catalogue
- */
-export function getI18n(): I18N {
-    return get(i18n);
-}
+export const i18n: I18N = await createTranslations(defaultLanguage);
 
 /**
  * Currently active language.
  */
-export const language = writable(defaultLanguage);
+export const language = new Observable<string>(defaultLanguage);
 
-language.subscribe(async function(newLanguage: string) {
-    if (!setTranslations) return;
-    setTranslations(await createTranslations(newLanguage));
+language.bindFunction(async function(newValue) {
+    for (let key of Object.keys(i18n)) {
+        delete i18n[key as keyof typeof i18n];
+    }
+
+    let newI18n = await createTranslations(newValue);
+    Object.assign(i18n, newI18n);
 });
-
-/**
- * Utility method for study book authors to get the current language.
- * @returns The current language
- */
-export function getLanguage(): string {
-    return get(language);
-}
 
 /**
  * Utility function to replace placeholders in the form of `$key$` in the given
@@ -56,7 +40,7 @@ export function getLanguage(): string {
  * @param values Key/values to insert
  * @return Text with replaced placeholders
  */
-export function _(text: string, values: any): string {
+export function _(text: string, values: Properties): string {
     let result = text;
 
     for (let key of Object.keys(values) || []) {
@@ -84,11 +68,11 @@ export function addCustomLanguage(language: string, translations: I18N) {
  * @returns New message catalogue
  */
 async function createTranslations(newLanguage: string): Promise<I18N> {
-    let i18n = await import(`./i18n/lang/${fallbackLanguage}.ts`);
+    let i18n = await import(`../i18n/lang/${fallbackLanguage}.ts`);
     let translations = deepCopy({}, i18n.default);
 
     if (newLanguage !== fallbackLanguage) {
-        let i18n = await import(`./i18n/lang/${newLanguage}.ts`);
+        let i18n = await import(`../i18n/lang/${newLanguage}.ts`);
         deepCopy(translations, i18n.default);
     }
 

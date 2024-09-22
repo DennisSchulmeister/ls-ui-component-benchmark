@@ -1,7 +1,6 @@
 import { TonicComponent }      from "../../../utils/TonicComponent.js";
-import { getApplicationFrame } from "../../ApplicationFrame.js";
-import { ApplicationFrame }    from "../../ApplicationFrame.js";
-import { _ }                   from "../../../utils/i18n.js";
+import * as book               from "../../../stores/book.js";
+import { i18n }                from "../../../stores/i18n.js";
 
 import "./BookContentPage.css";
 
@@ -9,12 +8,10 @@ import "./BookContentPage.css";
  * Main content area component to render the currently visible page of a study book.
  */
 export class BookContentPage extends TonicComponent {
-    #app: ApplicationFrame = getApplicationFrame();
-
     constructor() {
         super();
 
-        this.bindFunction(this.#app.book.currentPage, this.reRender.bind(this));
+        this.bindFunction(book.currentPage, this.reRender.bind(this));
 
         this.keyUp = this.keyUp.bind(this);
         window.addEventListener("keyup", this.keyUp);
@@ -25,21 +22,21 @@ export class BookContentPage extends TonicComponent {
     }
 
     render() {
-        let prevDisabled = !(this.#app.book.currentPage.value > 1);
-        let nextDisabled = !(this.#app.book.currentPage.value < this.#app.book.totalPages.value);
+        let prevDisabled = !(book.currentPage.value > 1);
+        let nextDisabled = !(book.currentPage.value < book.totalPages.value);
 
         return this.html`
             <div class="main-area">
-                <page-preview page=${this.#app.book.currentPage.value.toString()}></page-preview>
+                <page-preview page=${book.currentPage.value.toString()}></page-preview>
             </div>
             
             <div class="button-row">
                 <simple-button data-action="prev-page" type="primary" disabled="${prevDisabled.toString()}">
-                    <span>${_("BookContentPage/Button/Previous")}</span>
+                    <span>${i18n.BookContentPage.Button.Prev}</span>
                 </simple-button>
 
                 <simple-button data-action="next-page" type="primary" disabled="${nextDisabled.toString()}">
-                    <span>${_("BookContentPage/Button/Next")}</span>
+                    <span>${i18n.BookContentPage.Button.Next}</span>
                 </simple-button>
             </div>
         `;
@@ -53,9 +50,9 @@ export class BookContentPage extends TonicComponent {
         if (!button) return;
 
         if (button.dataset.action === "prev-page") {
-            this.#app.book.gotoPreviousPage();
+            book.gotoPreviousPage();
         } else if (button.dataset.action === "next-page") {
-            this.#app.book.gotoNextPage();
+            book.gotoNextPage();
         }
     }
 
@@ -69,10 +66,10 @@ export class BookContentPage extends TonicComponent {
             case "ArrowRight":
             case "Enter":
             case " ":
-                this.#app.book.gotoNextPage();
+                book.gotoNextPage();
                 break;
             case "ArrowLeft":
-                this.#app.book.gotoPreviousPage();
+                book.gotoPreviousPage();
                 break;
         }
     }

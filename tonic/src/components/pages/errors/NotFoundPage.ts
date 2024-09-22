@@ -1,5 +1,6 @@
 import { TonicComponent } from "../../../utils/TonicComponent.js";
-import { _ }              from "../../../utils/i18n.js";
+import { i18n }           from "../../../stores/i18n.js";
+import { _ }              from "../../../stores/i18n.js";
 
 import "./NotFoundPage.css";
 
@@ -13,12 +14,12 @@ type NotFoundPageProperties = {
 export class NotFoundPage extends TonicComponent<NotFoundPageProperties> {
     render() {
         return this.html`
-            <h1>${_("404-Page/Title")}</h1>
+            <h1>${i18n.Error404.Title}</h1>
             <p>
-                ${this.html(_("404-Page/Message1", this.props))}
+                ${this.html(_(i18n.Error404.Message1, this.props))}
             </p>
             <p>
-                ${this.html(_("404-Page/Message2"))}
+                ${this.html(i18n.Error404.Message2)}
             </p>
             <img src="img/page-not-found.png" alt="">
         `;

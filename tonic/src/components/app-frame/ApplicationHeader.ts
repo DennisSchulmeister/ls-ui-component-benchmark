@@ -1,10 +1,6 @@
-import type { TonicTemplate }    from "@socketsupply/tonic";
-
-import { TonicComponent }        from "../../utils/TonicComponent.js";
-import { getApplicationFrame }   from "../ApplicationFrame.js";
-import { ApplicationFrame }      from "../ApplicationFrame.js";
-import { _ }                     from "../../utils/i18n.js";
-import { getAvailableLanguages } from "../../utils/i18n.js";
+import type { TonicTemplate } from "@socketsupply/tonic";
+import { TonicComponent }     from "../../utils/TonicComponent.js";
+import * as i18n              from "../../stores/i18n.js";
 
 import "./ApplicationHeader.css";
 
@@ -13,8 +9,6 @@ import "./ApplicationHeader.css";
  * title of the currently open study book, the page numbers and a progress bar.
  */
 export class ApplicationHeader extends TonicComponent {
-    #app: ApplicationFrame = getApplicationFrame();
-
     render() {
         return this.html`
             <progress-bar></progress-bar>
@@ -24,7 +18,7 @@ export class ApplicationHeader extends TonicComponent {
 
                 <div class="side-by-side">
                     ${this.renderLanguageButtons()}
-                    <a href="#/unknown-page" class="link">${_("404-Page/TriggerLink")}</a>
+                    <a href="#/unknown-page" class="link">${i18n.i18n.Error404.TriggerLink}</a>
                     <page-numbers></page-numbers>
                 </div>
             </div>
@@ -34,13 +28,13 @@ export class ApplicationHeader extends TonicComponent {
     renderLanguageButtons(): TonicTemplate[] {
         let result = [];
 
-        for (let languageCode of getAvailableLanguages()) {
+        for (let language of i18n.languages) {
             let disabled = "";
-            if (languageCode == this.#app.language.value) disabled = "true";
+            if (language == i18n.language.value) disabled = "true";
 
             result.push(this.html`
-                <simple-button attributes=${{dataLanguage: languageCode}} disabled=${disabled}>
-                    <span>${languageCode}</span>
+                <simple-button attributes=${{dataLanguage: language}} disabled=${disabled}>
+                    <span>${language}</span>
                 </simple-button>
             `);
         }
@@ -55,7 +49,7 @@ export class ApplicationHeader extends TonicComponent {
         const button = TonicComponent.match(e.target, "[data-language]");
         if (!button) return;
 
-        this.#app.language.value = button.dataset.language;
+        i18n.language.value = button.dataset.language;
     }
 }
 

@@ -4,7 +4,7 @@
 
     $: pageNumber = params.pageNumber || 1;
 
-    import {i18n, language} from "../../../i18n.js";
+    import {i18n, language} from "../../../stores/i18n.js";
 </script>
 
 <div>

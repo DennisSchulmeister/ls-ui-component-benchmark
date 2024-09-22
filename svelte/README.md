@@ -1,8 +1,8 @@
 UI Component Benchmark: Svelte
 ==============================
 
-This is a minimal project based on the Svelte framework.
-Steps how this project was set up:
+This is a minimal project based on the Svelte framework, using our esbuild template
+and `esbuild-svelte` instead of `SvelteKit`. Steps how this project was set up:
 
 1. Copy the esbuild + TypeScript template
 
@@ -48,6 +48,15 @@ Steps how this project was set up:
         },
     }
   ```
+
+Without `SvelteKit` we need a SPA router (or roll our own, which is easy, actually).
+Let`s integrate `svelte-spa-router` for this, which is a hash-based router.
+
+1. Run `npm add -D svelte-spa-router`
+2. Define some routes in `src/components/routes.ts`
+3. Instantiate router in `src/components/ApplicationFrame.svelte`
+
+See [https://github.com/ItalyPaleAle/svelte-spa-router] for full documentation.
 
 Summary
 -------

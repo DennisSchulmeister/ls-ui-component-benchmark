@@ -24,6 +24,7 @@
     "svelte": "^4.2.19",
     "svelte-check": "^4.0.2",
     "svelte-preprocess": "^6.0.2",
+    "svelte-spa-router": "^4.0.1",
     "typescript": "^5.4.5"
   }
 }

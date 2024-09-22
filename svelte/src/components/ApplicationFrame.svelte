@@ -1,13 +1,6 @@
 <script>
-    alert("The application frame says hello!");
+    import Router from 'svelte-spa-router'
+    import routes from "./routes.js";
 </script>
 
-<p>
-    This will become the application frame ...
-</p>
-
-<style>
-    p {
-        color: red;
-    }
-</style>
+<Router {routes} />

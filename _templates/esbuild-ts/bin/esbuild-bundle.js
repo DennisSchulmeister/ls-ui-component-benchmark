@@ -1,15 +1,11 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
 import * as esbuild from "esbuild";
-import path from "path";
 
 esbuild.build({
-    entryPoints: [`src/index.ts`, `src/i18n/lang/**/*.ts`],
+    entryPoints: [`src/index.ts`],
     outdir: "static/_bundle/",    
 
     bundle: true,
+    splitting: true,
     minify: true,
     sourcemap: true,
     format: "esm",

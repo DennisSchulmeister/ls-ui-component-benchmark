@@ -4,10 +4,11 @@ import sveltePlugin from "esbuild-svelte";
 import { sveltePreprocess } from "svelte-preprocess";
 
 let ctx = await esbuild.context({
-    entryPoints: [`src/index.ts`, `src/i18n/lang/**/*.ts`],
+    entryPoints: [`src/index.ts`],
     outdir: "static/_bundle/",
 
     bundle: true,
+    splitting: true,
     sourcemap: true,
     format: "esm",
 

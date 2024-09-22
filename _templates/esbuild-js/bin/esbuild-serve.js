@@ -1,10 +1,11 @@
 import * as esbuild from "esbuild";
 
 let ctx = await esbuild.context({
-    entryPoints: [`src/index.js`, `src/i18n/lang/**/*.js`],
+    entryPoints: [`src/index.js`],
     outdir: "static/_bundle/",
 
     bundle: true,
+    splitting: true,
     sourcemap: true,
     format: "esm",
 

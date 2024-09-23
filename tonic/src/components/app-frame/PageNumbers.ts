@@ -1,7 +1,6 @@
 import { TonicComponent } from "../../utils/TonicComponent.js";
 import * as book          from "../../stores/book.js";
 
-
 /**
  * Small component to display the current page number and total number of pages.
  * Similar to this: 1 / 3

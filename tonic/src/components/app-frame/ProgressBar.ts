@@ -4,7 +4,7 @@ import * as book          from "../../stores/book.js";
 import "./ProgressBar.css";
 
 /**
- * Progress bar the grows wider the more the current page reaches the end of the
+ * Progress bar that grows wider the more the current page reaches the end of the
  * currently open study book.
  */
 export class ProgressBar extends TonicComponent {

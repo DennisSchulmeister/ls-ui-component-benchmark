@@ -13,40 +13,47 @@ export {fallbackLanguage} from "../i18n/index.js";
 let setTranslations: (value: I18N) => void;
 let customLanguages: any = {};
 
-/**
- * Message catalogue with all translations of the currently active language.
- * This is just a deeply structured key/value object, that can be directly
- * accessed with `$i18n.someKey` in the UI components.
- */
-export const i18n = readable(await createTranslations(defaultLanguage), function(set) {
+const _i18n = readable(await createTranslations(defaultLanguage), function(set) {
     setTranslations = set;
 });
 
-/**
- * Utility method for study book authors to get the current message catalogue.
- * @returns The current message catalogue
- */
-export function getI18n(): I18N {
-    return get(i18n);
-}
+const _language = writable(defaultLanguage);
 
-/**
- * Currently active language.
- */
-export const language = writable(defaultLanguage);
-
-language.subscribe(async function(newLanguage: string) {
+_language.subscribe(async function(newLanguage: string) {
     if (!setTranslations) return;
     setTranslations(await createTranslations(newLanguage));
 });
 
 /**
- * Utility method for study book authors to get the current language.
- * @returns The current language
+ * Message catalogue with all translations of the currently active language.
+ * This is just a deeply structured key/value object, that can be directly
+ * accessed with `$i18n.someKey` in the UI components.
  */
-export function getLanguage(): string {
-    return get(language);
+export const i18n = {
+    subscribe: _i18n.subscribe,
+
+    get value() {
+        return get(_i18n);
+    }
 }
+
+/**
+ * Currently active language.
+ */
+export const language = {
+    subscribe: _language.subscribe,
+    set:       _language.set,
+    update:    _language.update,
+
+    get value() {
+        return get(_language);
+    },
+
+    set value(value) {
+        _language.set(value);
+    },
+};
+
 
 /**
  * Utility function to replace placeholders in the form of `$key$` in the given
@@ -57,13 +64,11 @@ export function getLanguage(): string {
  * @return Text with replaced placeholders
  */
 export function _(text: string, values: any): string {
-    let result = text;
-
     for (let key of Object.keys(values) || []) {
         text = text.replaceAll(`\$${key}\$`, values[key]);
     }
 
-    return result;
+    return text;
 }
 
 /**

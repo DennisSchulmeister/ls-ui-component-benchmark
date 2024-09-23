@@ -831,11 +831,67 @@ without relying on direct prop binding or state changes. Here are the common use
 
 ### Routing
 
-TODO
+This would typically be handled by SvelteKit in a full-stack application, crossing the
+boundary between client and server with:
+
+* Filesystem based routes
+* Server-side rendering of the initial request
+* Client-side rendering of the follow-up requests
+* Server-side data loading
+* Server-side API endpoints
+* ...
+
+But this requires to write the backend in JavaScript, too. Instead, this mock application
+uses [svelte-spa-router](https://github.com/ItalyPaleAle/svelte-spa-router), which is a
+very complete hash-based router. This allows to deploy the final application on any static
+webserver without special configuration.
+
+Defining routes is very simple. The gist of it is do add a route in `src/components/routes.ts`
+and instantiate the `<Router>` in the main app frame:
+
+```ts
+export default {
+    "/": wrap({
+        component: BookContentPage,
+        conditions: [setPageNumber],
+    }),
+  
+    "*": NotFoundPage,
+};
+```
+
+```svelte
+<script lang="ts">
+    import Router from 'svelte-spa-router'
+    import routes from "./routes.js";
+</script>
+
+<Router {routes} />
+```
+
+That's basically it.
 
 ### Translations
 
-TODO
+Similar to Tonic, Svelte does not cover this. So we are rolling the same solution as with
+Tonic to define a "store" file that dynamically loads and manages the translation texts.
+Unlike Tonic however, changing the current language does **not** rerender the whole world.
+Instead, Svelte is smart enough to just update the texts in the DOM.
+
+```svelte
+<script lang="ts">
+    import {i18n, _}  from "../../../stores/i18n.js";
+    import {location} from 'svelte-spa-router'
+</script>
+
+<div>
+    <h1>{$i18n.Error404.Title}</h1>
+    <p>
+        {@html _($i18n.Error404.Message1, {url: $location})}
+    </p>
+    ...
+</div>
+```
 
 Thoughts and Learnings
 ----------------------
@@ -848,7 +904,53 @@ Thoughts and Learnings
   form must remain servable from a static webserver and shall later get an optional
   Django backend.
 
+* There is no need in Svelte to push rerendering to "leaf" components. In Tonic this
+  was required to minimize the rendering costs, because rerendering a component simply
+  destroy and recreates it.
+  
+  Svelte in contrast mutates the DOM, in which case it is better to have "dead simple"
+  leaf nodes that simple render out their property values. The more complex composite
+  elements can instead subscribe to a global store and pass the value to the inner
+  components. This keeps the inner components atomic and fully self-contained.
+
+* Rerendering mutates the DOM without deleting the elements, so CSS transitions work
+  out of the box. e.g. for the progress bar where the CSS width property is bound
+  to the current page.
+
+* DOM debuging is a bit harder in Svelte because the Svelte components cannot be seen
+  in the browser`s DOM inspector. Only their rendered output is visible.
+
+* Svelte components can be wraped in web components. This could be in interesting
+  option to provide custom elements to study book authors. There are some caveats
+  though, that need to be investigated then.
+
 Conclusion
 ----------
 
-TODO
+Even though its documentation is refreshingly compact, the learning curve for Svelte is
+a bit steep. Coming from either traditional DOM programming (including web components)
+or other frameworks, getting used to some concepts in Svelte takes some time. There are
+good examples and an interactive tutorial on the website though, which make it easy to
+get started. Porting the Tonic application to Svelte took me under 3 days, without
+knowing Svelte at all before.
+
+In direct comparison with Tonic, Svelte has 100 times more code: 45k instead of 450.
+But the bundle size is okay for both: 14 kB for Tonic vs. 25 kB for Svelte (considering
+only the `_bundle/index.js` file). Svelte is more complete in the following sense:
+
+* TypeScript typings out of the box
+* Smarter event handling with automatic deregistration
+* Store implementation tightly integrated with the HTML template syntax
+* Several SPA routers available: SvelteKit, svelte-spa-router, ...
+
+Therefor no additional code must be maintained in the application. Though, to be fair,
+the amount would be manageable. It is only around 300 lines of code in the `utils` directory
+of the Tonic version.
+
+Writing components with Svelte requires much less ceremony. The Svelte compiler automates
+many things that need to be hand-written in Tonic. They are small things, but they add up
+in larger components. And, more importantly, the Svelte HTML template syntax is much easier
+to read than all the JSX variants. The logic of conditional rendering is much easier to grasp.
+
+All in all Svelte seems like a reasonable alternative to Tonic, when the improved "developer
+experience" (comfort) outweighs the additional complexity that it brings.

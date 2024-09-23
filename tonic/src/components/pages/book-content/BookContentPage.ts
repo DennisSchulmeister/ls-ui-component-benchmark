@@ -6,6 +6,7 @@ import "./BookContentPage.css";
 
 /**
  * Main content area component to render the currently visible page of a study book.
+ * Also handles keyboard shortcuts to navigate between pages.
  */
 export class BookContentPage extends TonicComponent {
     constructor() {

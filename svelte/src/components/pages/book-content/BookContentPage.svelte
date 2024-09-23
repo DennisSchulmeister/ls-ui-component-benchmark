@@ -1,26 +1,78 @@
+<!--
+Main content area component to render the currently visible page of a study book.
+Also handles keyboard shortcuts to navigate between pages.
+-->
 <script lang="ts">
-    type parameters = {pageNumber?: number};
-    export let params:parameters = {};
+    import PagePreview   from "./PagePreview.svelte";
+    import SimpleButton  from "../../basic/SimpleButton.svelte";
 
-    $: pageNumber = params.pageNumber || 1;
+    import {i18n}        from "../../../stores/i18n.js";
+    import {currentPage} from "../../../stores/book.js";
+    import {totalPages}  from "../../../stores/book.js";
 
-    import {i18n, language} from "../../../stores/i18n.js";
+    /**
+     * Handle keyboard navigation
+     */
+    function onKeyUp(e: KeyboardEvent) {
+        if (e.target !== document.body) return;
+
+        switch (e.key) {
+            case "ArrowRight":
+            case "Enter":
+            case " ":
+                currentPage.next();
+                break;
+            case "ArrowLeft":
+                currentPage.prev();
+                break;
+        }
+    }
 </script>
 
-<div>
-    <p>
-        {$i18n.StudyBook.Title}
-    </p>
-    <p>
-        Book page: {pageNumber}
-    </p>
+<svelte:window on:keyup={onKeyUp} />
 
-    <button on:click={() => $language = "de"}>de</button>
-    <button on:click={() => $language = "en"}>en</button>
+<div class="book-content-page">
+    <div class="main-area">
+        <PagePreview page={$currentPage} />
+    </div>
+    
+    <div class="button-row">
+        <SimpleButton type="primary" disabled={$currentPage <= 1} on:click={currentPage.prev}>
+            {$i18n.BookContentPage.Button.Prev}
+        </SimpleButton>
+
+        <SimpleButton type="primary" disabled={$currentPage >= $totalPages} on:click={currentPage.next}>
+            {$i18n.BookContentPage.Button.Next}
+        </SimpleButton>
+    </div>
 </div>
 
 <style>
-    p {
-        color: blueviolet;
+    .book-content-page {
+        /* Fill complete main area */
+        flex: 1;
+        align-self: stretch;
+
+        /* Center content on screen */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+
+        margin: 2em;
+    }
+
+    .main-area {
+        flex: 1;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .button-row {
+        align-self: stretch;
+        display: flex;
+        justify-content: space-between;
     }
 </style>

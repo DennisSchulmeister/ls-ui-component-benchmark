@@ -349,23 +349,27 @@ Thus the next step continues with Tonic and Svelte.
 Mock Implementation
 -------------------
 
-**WORK IN PROGRESS:** This is currently being worked on.
-
+**WORK IN PROGRESS:** Tonic and Svelte implementations are now finished. The next
+step will be create another evaluation matrix to decide which way to continue.
 Possible criteria for the final evaluation could be:
 
 * **node_modules:** Number of packages in `node_modules` after the initial
   project setup. Determined with `find node_modules -name "package.json" | wc -l`.
 
-* **Files:** Number of code files needed to create for the simple example component.
+* **Files:** Number of code files needed to create for the mock application.
 
-* **Lines of Code:** Lines of code needed to be written for the example component
+* **Lines of Code:** Lines of code needed to be written for the mock application
   (including comments and white space, as I am too lazy to filter them out).
 
 * **Bundle Size:** File size of the generated build output that a client needs
   to download when running the app.
 
+* **Learning Curve:** My personal rating of the learning curve required to be
+  productive with each framework.
+
 * **Subjective Complexity:** My personal rating of the felt complexity while
-  implementing the example component.
+  implementing the example. Though that is tricky, as the second try is always
+  easier. :-)
 
 * **Subjective Code Cleanliness:** My personal rating of how good or bad the
   self-written code looks like and how easy it is to understand and maintain.

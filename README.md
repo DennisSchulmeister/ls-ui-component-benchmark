@@ -28,9 +28,14 @@ Mockups
 The following images show a sketch of the demo application. Each implementation tries
 to mimic this UI comparable features and code structure.
 
-![Englisch Mockup](_mockup/ui-mockup-english.png)
+![Englis Mockup](_mockup/ui-mockup-english.png)
+Mockup with English translation
 
 ![German Mockup](_mockup/ui-mockup-german.png)
+Mockup with German translation
+
+![The finished implementation](_mockup/finished-implementation.png)
+Final application
 
 Pre-selection
 -------------

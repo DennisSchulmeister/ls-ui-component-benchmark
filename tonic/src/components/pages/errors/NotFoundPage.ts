@@ -21,7 +21,7 @@ export class NotFoundPage extends TonicComponent<NotFoundPageProperties> {
             <p>
                 ${this.html(i18n.Error404.Message2)}
             </p>
-            <img src="img/page-not-found.png" alt="">
+            <img src="page-not-found.png" alt="">
         `;
     }
 }

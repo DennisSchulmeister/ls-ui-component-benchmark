@@ -1,7 +1,6 @@
 application-frame {
     /* Fill screen (body flexbox) */
     flex: 1;
-    width: 100vw;
 
     /* Use flexbox to layout the top-most app content */
     display: flex;

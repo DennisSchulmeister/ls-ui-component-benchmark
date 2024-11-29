@@ -21,6 +21,7 @@ export class SimpleButton extends TonicComponent<SimpleButtonProperties> {
 
     click(e: MouseEvent) {
         if (this.props?.disabled === "true") {
+            // Ignore click on disabled button
             e.stopImmediatePropagation();
         }
     }

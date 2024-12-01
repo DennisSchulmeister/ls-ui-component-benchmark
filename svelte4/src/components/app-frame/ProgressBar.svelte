@@ -1,4 +1,5 @@
 <!--
+@component
 Progress bar that grows wider the more the current page reaches the end of the
 currently open study book.
 -->

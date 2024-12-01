@@ -1,4 +1,5 @@
 <!--
+@component
 Simple component to render the current book title.
 -->
 <script lang="ts">

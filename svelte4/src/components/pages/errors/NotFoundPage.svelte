@@ -1,4 +1,5 @@
 <!--
+@component
 Simple 404 not found page
  -->
 <script lang="ts">

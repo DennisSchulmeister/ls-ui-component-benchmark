@@ -1,4 +1,5 @@
 <!--
+@component
 A simple button component. Renders a simple styled button.
 -->
 <script lang="ts">

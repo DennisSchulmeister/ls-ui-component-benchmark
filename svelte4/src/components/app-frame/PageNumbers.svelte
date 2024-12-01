@@ -1,4 +1,5 @@
 <!--
+@component
 Small component to display the current page number and total number of pages.
 -->
 <script lang="ts">

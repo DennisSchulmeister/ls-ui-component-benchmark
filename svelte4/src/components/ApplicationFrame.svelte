@@ -1,4 +1,5 @@
 <!--
+@component
 Root component of the application. It defines a very basic UI for this practical test,
 consisting of an application header, a page preview and two buttons to navigate within
 the simulated currently open study book.

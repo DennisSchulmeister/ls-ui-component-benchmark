@@ -24,21 +24,19 @@ Steps how this project was set up:
 
 1. Copy the esbuild + TypeScript template
 
-2. Run `npm add -D svelte svelte-check svelte-preprocess esbuild-svelte @tsconfig/svelte`
+2. Run `npm add -D svelte sv svelte-check esbuild-svelte @tsconfig/svelte`
 
 3. Modify scripts in `bin/` according to the README of esbuild-svelte
 
    ```js
    import sveltePlugin from "esbuild-svelte";
-   import sveltePreprocess from "svelte-preprocess";
+
 
    ...
    format: "esm",
    mainFields: ["svelte", "browser", "module", "main"],
    conditions: ["svelte", "browser"],
-   plugins: [sveltePlugin({
-        preprocess: sveltePreprocess(),
-   })],
+   plugins: [sveltePlugin()],
    ```
 
    ```html
@@ -89,7 +87,7 @@ can be chosen when it is imported (see [Nested Components](#nested-components)).
 ```svelte
 <!-- Initialization -->
 <script>
-    export let count = 0;
+    let {count = 0} = $props();
 
     function increaseCountBy(n: number) {
         count += n;
@@ -98,7 +96,7 @@ can be chosen when it is imported (see [Nested Components](#nested-components)).
 
 <!-- HTML template -->
 Count: {count}
-<button on:click={() => increaseCountBy(2)}>+2</button>
+<button onclick={() => increaseCountBy(2)}>+2</button>
 
 <!-- Scoped style -->
 <style>
@@ -109,11 +107,10 @@ Count: {count}
 </style>
 ```
 
-Here is a quick cheat cheat based on https://svelte.dev/docs/svelte-components.
-More details can be found in the other sections.
+Here is a quick cheat cheat based on https://svelte.dev/docs/svelte/overview.
 
 ```svelte
-<script context="module" lang="ts">
+<script module lang="ts">
     // Module level code running once, when the module first evaluates.
     // Here you can export functions and variables, but variables won't be reactive
     // and you cannot use the default export (that is the component itself).
@@ -122,20 +119,29 @@ More details can be found in the other sections.
     export function getTotal() {
         return totalComponents;
     }
-</>
+</script>
 
 <script lang="ts">
     // Component level code running each time, when a new component instance is created.
     // Think of this as the constructor of the component.
     totalComponents += 1;
 
-    // Variables are automatically reactive (trigger rerendering)
-    let count = 0;
-    let allNames = [];
+    // Variables using the $state() rune are reactive (trigger rerendering)
+    let count    = $state(0);
+    let allNames = $state([]);
 
-    // export defines properties that are accessible to consumers of the component
-    export let name  = "Default name";
-    export let title = "Kitchen sink component";
+    // $props() is used to read properties set by the consumers of the component.
+    // Typing is optional but recommended for anything but simple properties.
+    // In this example we would get away without the explicit typing. :-)
+    interface Props {
+        name?:  string,
+        title?: string,
+    }
+
+    let {
+        name  = "Default name",
+        title = "Kitchen sink component",
+    } = $props();
 
     // Functions can also be exported
     export function greet(name1: string) {
@@ -144,20 +150,23 @@ More details can be found in the other sections.
         // Assignment triggers rerendering
         name = name1;
 
+        // Arrays and objects support "deep reactivity". This will rerender.
         allNames.push(name);
-        allNames = allNames;    // Needed to trigger rerendering
     }
 
-    // Read-only properties
-    export const youCannotChangeThis = "Consumers cannot change this";
+    // Derived reactive values (will be recalculated when the referenced value changes)
+    let title1 = $derived(title.toUpperCase());
 
-    // Reactive blocks (run last on construction and then when the references values change)
-    $: document.title = title;
 
-    $: {
+    // Side-effects (run last on construction and then when the references values change)
+    $effect(() => {
+        document.title = title; 
+    });
+
+    $effect(() => {
         console.log("The title has changed.");
         console.log(`The new title is ${title}`);
-    }
+    });
 </script>
 
 <!--
@@ -258,7 +267,7 @@ Similarly, if you only want to show the error state, you can omit the then block
 
 Key blocks destroy and recreate their contents when the value of an expression changes.
 This is useful if you want an element to play its transition whenever a value changes.
-When used around components, this will cause them to be reinstantiated and reinitialised.
+When used around components, this will cause them to be re-instantiated and re-initialized.
 
 ```svelte
 {#key value}
@@ -272,20 +281,21 @@ When used around components, this will cause them to be reinstantiated and reini
 
 ### Reactive Rendering
 
-Variables and properties are reactive by default. Value assignment triggers rerendering.
-Be careful with arrays and objects. When the array content or object properties change,
-the variable must be reassigned to trigger rerendering.
+Reactive variables are declared with the `$state` rune. Properties with `$props`.
+They are basically simple values with a transparent proxy object that triggers
+re-rendering whenever they change. This also includes "deep reactivity" for arrays
+and plain objects, meaning that they also trigger re-rendering when their elements
+change. However, for maps and sets the special implementations from Svelte must be used.
 
 ```svelte
 <script lang="ts">
-    let count = 0;
-    let values = [];
+    let count  = $state(0);
+    let values = $state([]);
 
     function appendValue() {
         count++;
 
         values.push(count);
-        values = values;
     }
 
     Count: {count}
@@ -293,28 +303,23 @@ the variable must be reassigned to trigger rerendering.
 </script>
 ```
 
-`$:` can be used to mark reactive statements and reactive code blocks. They will be
-re-executed when one of the references variables change. But be careful. Here be dragons!
-
- * Reactive statements / code blocks are executed after all other statements, no
-   matter where they appear inside a `<script>`
-
- * Static code analysis is used to find the variables, but only variables directly used
-   in the analyzed statement or code block are considered. Variables used in the function
-   body of a function called in the reactive statement/block are not found.
+`$derived` can be used to declare calculated values that depend upon other reactive
+values. `$effect` can be used to cause side-effects when a reactive value changes.
+But be careful. Here be dragons! Side effects do not immediately run when they are
+declared.
 
 ```svelte
 <script lang="ts">
-    // Reactive blocks (run last on construction and then when the references values change)
-    $: document.title = title;
-
-    $: {
+    // Side-effects (run last on construction and then when the references values change)
+    $effect(() => {
+        document.title = title;
         console.log("The title has changed.");
         console.log(`The new title is ${title}`);
-    }
+    });
 
     // This will be executed first!
-    let title = "Dummy title";
+    let title  = $state("Dummy title");
+    let title2 = $derived(title.toUpperCase());
 </script>
 
 The title is: {title}
@@ -322,27 +327,19 @@ The title is: {title}
 
 ### Property Declaration
 
-Normal variables are only accessible within a component:
+Properties are declared with `$props` using object decomposition.
+Typing is optional but needed if it cannot be deduced from the default value.
 
 ```svelte
 <script lang="ts">
-    let count = 0;
+    interface Props {
+        count?: number;
+    }
+
+    let {count = 0}: Props = $props();
 </script>
 
-
-<button on:click={count++}>{count}</button>
-```
-
-Exported variables are exposed as properties, that can be accessed by consumers
-of a component:
-
-```svelte
-<script lang="ts">
-    export let count = 0;
-</script>
-
-
-<button on:click={count++}>{count}</button>
+<button onclick={count++}>{count}</button>
 ```
 
 Example consumer:
@@ -354,41 +351,6 @@ Example consumer:
 
 <CountingButton count={5} />
 ```
-
-Exported constants are read-only for the consumers and functions can also be exported.
-
-```svelte
-<script lang="ts">
-    // export defines properties that are accessible to consumers of the component
-    export let name  = "Default name";
-    export let title = "Kitchen sink component";
-
-    // Functions can also be exported
-    export function greet(name1: string) {
-        alert(`Hello, ${name1}`);
-
-        // Assignment triggers rerendering
-        name = name1;
-
-        allNames.push(name);
-        allNames = allNames;    // Needed to trigger rerendering
-    }
-
-    // Read-only properties
-    export const youCannotChangeThis = "Consumers cannot change this";
-</script>
-```
-
-ChatGPT explains the use cases like this: In Svelte, you can export variables, constants, and
-functions from a component to expose them to the parent or other consumers of the component.
-Here are the use cases for each:
-
-- **Variables (`let`)**: Used for reactive data that can be passed as props, enabling two-way data binding.
-
-- **Constants (`const`)**: Used to expose static, non-reactive data such as configurations, enums, or constants.
-
-- **Functions**: Used to expose specific functionality or methods that can be triggered by the parent component,
-  allowing direct control over the child component's behavior.
 
 ### Nested Components
 
@@ -409,24 +371,31 @@ Properties set on a child component may _contain_ JavaScript or _be_ JavaScript:
 
 ```svelte
 <script lang="ts">
-    let n = 1;
+    let n = $state(1);
     function onClick() { ... }
 </script>
 
-<ChildComponent page="Page {n}" on:click={onClick}>
+<ChildComponent page="Page {n}" onclick={onClick}>
 ```
 
 JavaScript may be quoted to fix syntax-highlighting in some cases:
 
 ```svelte
-<ChildComponent "on:click={onClick}">
+<ChildComponent "onclick={onClick}">
 ```
 
 Curly braces can be output e.g. with `&lbrace;` and `&rbrace;`.
 
 The usual "data down, events up" from React et all is not quite true for Svelte.
-While still being recommended to pass data mostly down only, a parent component
-can bind local variables/properties to child properties to have data flow up.
+While still being recommended to pass data mostly down only, a child component
+can use `$bindable` to declare properties that a parent can bind to, to have data
+flow upwards.
+
+```svelte
+<script lang="ts">
+    let {prop1, prop2 = $bindable(815), ...props} = $props();
+</script>
+```
 
 ```svelte
 <ChildComponent prop1={42} bind:prop2={myVar} {prop3} {...moreProps}>
@@ -453,9 +422,9 @@ Ordering is important:
 
 ```svelte
 <input
-	on:input={() => console.log('Old value:', value)}
+	oninput={() => console.log('Old value:', value)}
 	bind:value
-	on:input={() => console.log('New value:', value)}
+	oninput={() => console.log('New value:', value)}
 />
 ```
 
@@ -464,7 +433,7 @@ that has a function as default value and receive a callback function from its pa
 
 ```svelte
 <script lang="ts">
-    export let format = (n) => n.toFixed(2);
+    let {format = (n) => n.toFixed(2)} = $props();
 </script>
 ```
 
@@ -483,14 +452,14 @@ This can be useful to call functions exported by the child component:
 ```svelte
 <!-- button.svelte -->
 <script>
-	let count = 0;
+	let count = $state(0);
 	
 	export function reset() {
 		count = 0;	
 	}
 </script>
 
-<button on:click={() => count++}>{count}</button>
+<button onclick={() => count++}>{count}</button>
 ```
 
 ```svelte
@@ -501,7 +470,7 @@ This can be useful to call functions exported by the child component:
 </script>
 
 <Button bind:this={button}></Button>
-<button on:click={() => button.reset()}>Reset Counter</button>
+<button onclick={() => button.reset()}>Reset Counter</button>
 ```
 
 The same holds true for constants, thought it might make more sense to export them
@@ -514,14 +483,18 @@ from the module instead of the component.
 </script>
 ```
 
-Unnamed Slot:
+Passing child components:
 
 ```svelte
 <!-- Widget.svelte -->
 <div>
-	<slot>
-		this fallback content will be rendered when no content is provided, like in the first example
-	</slot>
+    {#if children}
+        {@render children()}
+    {:else}
+        <p>
+            This fallback content will be rendered when no content is provided, like in the first example
+        </p>
+    {/if}
 </div>
 
 <!-- App.svelte -->
@@ -529,305 +502,59 @@ Unnamed Slot:
 <!-- this component will render the default content -->
 
 <Widget>
-	<p>this is some child content that will overwrite the default slot content</p>
+	<p>This is some child content that will overwrite the default slot content</p>
 </Widget>
 ```
 
-Named slots:
+Named snippets:
 
 ```svelte
 <!-- Widget.svelte -->
+<script lang="ts">
+    import type { Snippet } from 'svelte';
+
+    interface Props {
+        header: Snippet;
+        footer: Snippet;
+    };
+
+    let {header, footer}: Props = $props();
+</script>
+
 <div>
-	<slot name="header">No header was provided</slot>
+	{@render header?.()}
 	<p>Some content between header and footer</p>
-	<slot name="footer" />
+	{@render footer?.()}
 </div>
 
 <!-- App.svelte -->
 <Widget>
-	<h1 slot="header">Hello</h1>
-	<p slot="footer">Copyright (c) 2019 Svelte Industries</p>
-</Widget>
+    {#snippet header()}
+	    <h1>Hello</h1>
+    {/snippet}
 
-<Widget>
-	<h1 slot="header">Hello</h1>
-
-    <!-- Filling the slot without an intermediate DOM element -->
-	<svelte:fragment slot="footer">
-		<p>All rights reserved.</p>
-		<p>Copyright (c) 2019 Svelte Industries</p>
-	</svelte:fragment>
+    {#snippet footer()}
+	    <p>Copyright (c) 2019 Svelte Industries</p>
+    {/snippet}
 </Widget>
 ```
 
 ### DOM Event Handling
 
-JavaScript functions can be bound to events with the `on:event|modifier` syntax.
+JavaScript functions can be bound to events with the `onevent` syntax.
 
 ```svelte
-<button on:click={onButtonClick}>Click here</button>
-<button on:click={() => count++}>+1</button>
+<button onclick={onButtonClick}>Click here</button>
+<button onclick={() => count++}>+1</button>
 ```
 
-Modifiers are:
-
-* `preventDefault`
-* `stopPropagation`
-* `stopImmediatePropagation`
-* `passive`
-* `once`
-* ...
-
-Modifiers can be chained together, e.g. `on:click|once|capture={...}`.
-
-If the `on:` directive is used without a value, the component will forward the event.
-
-```svelte
-<button on:click> The component itself will emit the click event </button>
-```
-
+Since Svelte 5 event listeners are ordinary properties with callback functions.
 It's possible to have multiple event listeners for the same event.
 
 ### Custom Events
 
-Components can raise events that parents can listen for.
-
-```svelte
-<script>
-    import { createEventDispatcher } from 'svelte';
-
-    const dispatch = createEventDispatcher();
-
-    function sendMessage() {
-        dispatch('message', { text: 'Hello from Child!' });
-    }
-</script>
-
-<button on:click={sendMessage}>Send Message</button>
-```
-
-Events can be typed with `createEventDispatcher`:
-
-```svelte
-<script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-
-	const dispatch = createEventDispatcher<{
-		event: null; // does not accept a payload
-		click: string; // has a required string payload
-		type: string | null; // has an optional string payload
-	}>();
-
-	function handleClick() {
-		dispatch('event');
-		dispatch('click', 'hello');
-	}
-
-	function handleType() {
-		dispatch('event');
-		dispatch('type', Math.random() > 0.5 ? 'world' : null);
-	}
-</script>
-
-<button on:click={handleClick} on:keydown={handleType}>Click</button>
-```
-
-Full answer from ChatGPT: Yes, a Svelte component can raise (or dispatch) custom events
-that a parent component can listen to using the built-in `dispatch` function from `svelte`.
-This mechanism allows child components to communicate with their parent components in a
-structured way, similar to how native DOM events work. The parent can then bind a listener
-to these custom events.
-
-#### How to Raise (Dispatch) an Event in Svelte
-
-1. **Use `createEventDispatcher` in the child component** to dispatch custom events.
-2. **Listen for the event in the parent component** using `on:eventName`.
-
-##### Example of Raising a Custom Event in a Child Component:
-
-**Child Component (`Child.svelte`)**:
-```svelte
-<script>
-    import { createEventDispatcher } from 'svelte';
-
-    const dispatch = createEventDispatcher();
-
-    function sendMessage() {
-        dispatch('message', { text: 'Hello from Child!' });
-    }
-</script>
-
-<button on:click={sendMessage}>Send Message</button>
-```
-
-**Parent Component (`Parent.svelte`)**:
-
-```svelte
-<script>
-    function handleMessage(event) {
-        console.log(event.detail.text); // "Hello from Child!"
-    }
-</script>
-
-<Child on:message={handleMessage} />
-```
-
-#### Use Cases for Raising Events
-
-Raising events is useful when a **child component** needs to **communicate back to the parent**
-without relying on direct prop binding or state changes. Here are the common use cases:
-
-##### 1. **Handling User Actions (Click, Input, Submit, etc.)**
-
-   - **Use case**: A child component (e.g., a button, form, or input field) triggers some
-     action based on user interaction, and the parent component needs to handle it.
-
-   - **Example**: A custom button component dispatches an event when clicked, so the parent
-     can perform the appropriate action (e.g., submitting data, opening a modal).
-
-```svelte
-<!-- Child.svelte -->
-<button on:click={() => dispatch('clicked')}>Click me</button>
-
-<!-- Parent.svelte -->
-<Child on:clicked={handleClick} />
-```
-
-##### 2. **Component Lifecycle Events**
-
-   - **Use case**: A child component might need to notify its parent when certain lifecycle
-     events occur, such as when it's initialized, destroyed, or some background process completes.
-
-   - **Example**: A data-fetching component dispatches an event when it has finished fetching data,
-     allowing the parent to update the UI accordingly.
-
-```svelte
-<!-- Child.svelte -->
-<script>
-    import { onMount } from 'svelte';
-    const dispatch = createEventDispatcher();
-
-    onMount(() => {
-        dispatch('loaded', { data: 'some data' });
-    });
-</script>
-
-<!-- Parent.svelte -->
-<Child on:loaded={handleDataLoaded} />
-```
-
-##### 3. **Form or Input Validation**
-
-   - **Use case**: A child form or input component can raise an event to indicate its validity
-     or to send back the form's data to the parent.
-
-   - **Example**: A custom form component can dispatch a `submit` event when the form is submitted,
-     sending the form data back to the parent for further processing.
-
-```svelte
-<!-- Child.svelte -->
-<form on:submit|preventDefault={() => dispatch('submit', { data: formData })}>
-    <input bind:value={formData.name} />
-    <button type="submit">Submit</button>
-</form>
-
-<!-- Parent.svelte -->
-<Child on:submit={handleFormSubmit} />
-```
-
-##### 4. **Modal or Dropdown Close Events**
-
-   - **Use case**: A modal or dropdown component may need to notify the parent when it has been
-     closed or an item has been selected.
-
-   - **Example**: A dropdown component dispatches an event when an item is selected, allowing the
-     parent to handle the selection.
-
-```svelte
-<!-- Child.svelte -->
-<script>
-    function selectItem(item) {
-        dispatch('select', { item });
-    }
-</script>
-
-<!-- Parent.svelte -->
-<Child on:select={handleSelection} />
-```
-
-##### 5. **Component-Specific State Updates**
-
-   - **Use case**: Sometimes, a child component manages its own internal state but needs to notify
-     the parent when that state changes (e.g., toggling a checkbox or switching tabs).
-
-   - **Example**: A toggle component can dispatch an event whenever its state changes, and the parent
-     can react accordingly.
-
-   ```svelte
-   <!-- Child.svelte -->
-   <script>
-       let checked = false;
-       function toggle() {
-           checked = !checked;
-           dispatch('change', { checked });
-       }
-   </script>
-
-   <button on:click={toggle}>{checked ? 'On' : 'Off'}</button>
-
-   <!-- Parent.svelte -->
-   <Child on:change={handleToggleChange} />
-   ```
-
-##### 6. **Delegating Complex Logic**
-
-   - **Use case**: A child component might handle complex logic internally but dispatch events to
-     delegate part of the logic to the parent. This keeps components decoupled while allowing the
-     parent to respond to specific actions.
-
-   - **Example**: A video player component dispatches events such as `play`, `pause`, or `end`, and
-     the parent component can log these events or take other actions.
-
-```svelte
-<!-- Child.svelte -->
-<video on:play={() => dispatch('play')} on:pause={() => dispatch('pause')}></video>
-
-<!-- Parent.svelte -->
-<Child on:play={handlePlay} on:pause={handlePause} />
-```
-
-##### 7. **Communication Between Sibling Components via Parent**
-
-   - **Use case**: Events raised by one child component can be captured by the parent and passed
-     down as props to another sibling, enabling indirect communication between siblings.
-
-   - **Example**: A list component dispatches an event when an item is selected, and the parent
-     passes this information to a details component.
-
-```svelte
-<!-- Parent.svelte -->
-<script>
-    let selectedItem;
-    function handleSelection(event) {
-        selectedItem = event.detail.item;
-    }
-</script>
-
-<ItemList on:select={handleSelection} />
-<ItemDetails {selectedItem} />
-```
-
-#### When to Use Events:
-
-- **Decoupling logic**: Events are a great way to decouple child and parent components.
-  Instead of the parent needing to know how the child works, it just listens for specific
-  events.
-
-- **Communication**: Events are useful when you need to pass data or notify the parent of
-  something that happened inside the child, without direct prop changes or binding.
-
-- **Component autonomy**: If a component needs to manage its own state but still inform
-  the parent of important changes, events provide a clean way to do that.
+Prior to Svelte 5, components could raise events that the parents listen for.
+Nowadays the recommendation is simply to pass callback functions down.
 
 ### Routing
 
@@ -841,8 +568,12 @@ boundary between client and server with:
 * Server-side API endpoints
 * ...
 
-But this requires to write the backend in JavaScript, too. Instead, this mock application
-uses [svelte-spa-router](https://github.com/ItalyPaleAle/svelte-spa-router), which is a
+By default SvelteKit is a server-side framework going hand in hand with Svelte in the
+frontend, adding server side rendering, hydration and many more. But it can also be
+used to export pre-rendered static pages and create Single Page Apps. But the SPAs don't
+use hash routing, meaning they need special server configuration. Let's use a simpler
+approach then. This mock application uses
+[svelte-spa-router](https://github.com/ItalyPaleAle/svelte-spa-router), which is a
 very complete hash-based router. This allows to deploy the final application on any static
 webserver without special configuration.
 
@@ -899,10 +630,7 @@ Thoughts and Learnings
 * For VS Code the **Svelte for VS Code** extension from the Svelte team should be
   installed. Otherwise there will be no syntax-highlighting for `*.svelte` files.
 
-* `npm create svelte@latest` enables SvelteKit, which is very powerful but also a
-  JavaScript **server** backend (with hydration). But `lecture-slides.js` in its current
-  form must remain servable from a static webserver and shall later get an optional
-  Django backend.
+* `npm create svelte@latest` enables SvelteKit. Be careful. :-)
 
 * There is no need in Svelte to push rerendering to "leaf" components. In Tonic this
   was required to minimize the rendering costs, because rerendering a component simply
@@ -917,10 +645,10 @@ Thoughts and Learnings
   out of the box. e.g. for the progress bar where the CSS width property is bound
   to the current page.
 
-* DOM debuging is a bit harder in Svelte because the Svelte components cannot be seen
+* DOM debugging is a bit harder in Svelte because the Svelte components cannot be seen
   in the browser`s DOM inspector. Only their rendered output is visible.
 
-* Svelte components can be wraped in web components. This could be in interesting
+* Svelte components can be wrapped in web components. This could be in interesting
   option to provide custom elements to study book authors. There are some caveats
   though, that need to be investigated then.
 
@@ -935,7 +663,7 @@ get started. Porting the Tonic application to Svelte took me under 3 days, witho
 knowing Svelte at all before.
 
 In direct comparison with Tonic, Svelte has 100 times more code: 45k instead of 450.
-But the bundle size is okay for both: 14 kB for Tonic vs. 25 kB for Svelte (considering
+But the bundle size is okay for both: 14 kB for Tonic vs. 50 kB for Svelte (considering
 only the `_bundle/index.js` file). Svelte is more complete in the following sense:
 
 * TypeScript typings out of the box

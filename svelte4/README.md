@@ -122,7 +122,7 @@ More details can be found in the other sections.
     export function getTotal() {
         return totalComponents;
     }
-</>
+</script>
 
 <script lang="ts">
     // Component level code running each time, when a new component instance is created.
@@ -258,7 +258,7 @@ Similarly, if you only want to show the error state, you can omit the then block
 
 Key blocks destroy and recreate their contents when the value of an expression changes.
 This is useful if you want an element to play its transition whenever a value changes.
-When used around components, this will cause them to be reinstantiated and reinitialised.
+When used around components, this will cause them to be re-instantiated and re-initialized.
 
 ```svelte
 {#key value}
@@ -917,10 +917,10 @@ Thoughts and Learnings
   out of the box. e.g. for the progress bar where the CSS width property is bound
   to the current page.
 
-* DOM debuging is a bit harder in Svelte because the Svelte components cannot be seen
+* DOM debugging is a bit harder in Svelte because the Svelte components cannot be seen
   in the browser`s DOM inspector. Only their rendered output is visible.
 
-* Svelte components can be wraped in web components. This could be in interesting
+* Svelte components can be wrapped in web components. This could be in interesting
   option to provide custom elements to study book authors. There are some caveats
   though, that need to be investigated then.
 

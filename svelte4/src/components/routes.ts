@@ -6,7 +6,7 @@ import NotFoundPage       from "./pages/errors/NotFoundPage.svelte";
 import {currentPage}      from "../stores/book.js";
 
 /**
- * Update page number in the global store before the router renters the
+ * Update page number in the global store before the router renders the
  * next page. This makes sure that all components, not just the one chosen
  * by the router, receive the updated page number.
  */
